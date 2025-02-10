@@ -10,7 +10,7 @@ public class OmaMoottori extends Moottori {
 	private Palvelupiste[] palvelupisteet;
 
 	public OmaMoottori() {
-		palvelupisteet = new Palvelupiste[4];  // Четыре этапа обслуживания
+		palvelupisteet = new Palvelupiste[4];
 
 		palvelupisteet[0] = new Palvelupiste(new Normal(10, 5), tapahtumalista, TapahtumanTyyppi.ORDER_RECEIVED);
 		palvelupisteet[1] = new Palvelupiste(new Normal(15, 7), tapahtumalista, TapahtumanTyyppi.CHECK_AVAILABILITY);
@@ -29,29 +29,31 @@ public class OmaMoottori extends Moottori {
 	protected void suoritaTapahtuma(Tapahtuma t) {
 		Asiakas a;
 		switch ((TapahtumanTyyppi) t.getTyyppi()) {
+
 			case ORDER_RECEIVED:
-				palvelupisteet[0].lisaaJonoon(new Asiakas());
+				a = new Asiakas();
+				palvelupisteet[0].lisaaJonoon(a);
 				saapumisprosessi.generoiSeuraava();
 				break;
 
 			case CHECK_AVAILABILITY:
-				a = palvelupisteet[0].otaJonosta();
-				palvelupisteet[1].lisaaJonoon(a);
+				a = (Asiakas) palvelupisteet[0].otaJonosta();
+				if (isStorageAvailable()) {
+					palvelupisteet[1].lisaaJonoon(a);
+				} else {
+					putInQueueForWaiting(a);
+				}
 				break;
 
 			case RESERVE_STORAGE:
-				a = palvelupisteet[1].otaJonosta();
+				a = (Asiakas) palvelupisteet[1].otaJonosta();
+				reserveStorageForCustomer(a);
 				palvelupisteet[2].lisaaJonoon(a);
 				break;
 
 			case PAYMENT:
-				a = palvelupisteet[2].otaJonosta();
-				palvelupisteet[3].lisaaJonoon(a);
-				break;
-
-			case ORDER_COMPLETED:
-				a = palvelupisteet[3].otaJonosta();
-				a.setPoistumisaika(Kello.getInstance().getAika());
+				a = (Asiakas) palvelupisteet[2].otaJonosta();
+				a.setPoistumisaika(Kello.getInstance().getAika()); // Записываем время ухода клиента
 				a.raportti();
 				break;
 		}
@@ -71,4 +73,20 @@ public class OmaMoottori extends Moottori {
 		System.out.println("Simulointi päättyi kello " + Kello.getInstance().getAika());
 		System.out.println("Tulokset ... puuttuvat vielä");
 	}
+
+
+	private boolean isStorageAvailable() {
+		return Math.random() > 0.5;
+	}
+
+	private void putInQueueForWaiting(Asiakas a) {
+		Trace.out(Trace.Level.INFO, "Asiakas " + a.getId() + " joutui jonoon odottamaan.");
+	}
+
+	private void reserveStorageForCustomer(Asiakas a) {
+		Trace.out(Trace.Level.INFO, "Asiakas " + a.getId() + " varasi varastotilan.");
+	}
+
+
+
 }

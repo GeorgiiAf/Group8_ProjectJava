@@ -7,13 +7,14 @@ import simu.framework.*;
 public class Asiakas {
 	private double saapumisaika;
 	private double poistumisaika;
+	private int vuokraAika;
 	private double maksuvaiheAika;
 	private double varausvaiheAika;
 	private double[] vaiheajat = new double[4];
 	private int id;
 	private static int i = 1;
 	private static long sum = 0;
-
+	private Varastohuone varasto;
 	
 	public Asiakas(){
 	    id = i++;
