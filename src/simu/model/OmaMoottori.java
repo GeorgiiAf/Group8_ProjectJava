@@ -13,26 +13,23 @@ public class OmaMoottori extends Moottori{
 
 	private Palvelupiste[] palvelupisteet;
 
-/*
-	private final int totalSpots;
-	private final int electricSpots;
-	private int availableSpots;
-	private int availableElectricSpots;
+	private final int totalSpots = 25;
+	private final int electricSpots = 4;
+	private int availableSpots = totalSpots - electricSpots;
+	private int availableElectricSpots = electricSpots;
+
+
+	private final Queue<Asiakas> waitingQueue = new LinkedList<>();
 	private Queue<Asiakas> regularQueue = new LinkedList<>();
 	private Queue<Asiakas> electricQueue = new LinkedList<>();
-*/
 
 	public OmaMoottori(){
 
-	//	this.totalSpots = 25;
-	//	this.electricSpots = 4;
-
-
 		palvelupisteet = new Palvelupiste[3];
 
-		palvelupisteet[0]=new Palvelupiste(new Normal(10,6), tapahtumalista, TapahtumanTyyppi.DIAGNOSTIC_DONE);
-		palvelupisteet[1]=new Palvelupiste(new Normal(10,10), tapahtumalista, TapahtumanTyyppi.PARTS_ORDERED);
-		palvelupisteet[2]=new Palvelupiste(new Normal(5,3), tapahtumalista, TapahtumanTyyppi.CAR_READY);
+		palvelupisteet[0]=new Palvelupiste(new Normal(10,6), tapahtumalista, TapahtumanTyyppi.DIAGNOSTIC_DONE,10);
+		palvelupisteet[1]=new Palvelupiste(new Normal(10,10), tapahtumalista, TapahtumanTyyppi.PARTS_ORDERED,8);
+		palvelupisteet[2]=new Palvelupiste(new Normal(5,3), tapahtumalista, TapahtumanTyyppi.CAR_READY,7);
 
 		saapumisprosessi = new Saapumisprosessi(new Negexp(15,5), tapahtumalista, TapahtumanTyyppi.CAR_ARRIVES);
 
@@ -50,10 +47,14 @@ public class OmaMoottori extends Moottori{
 		switch ((TapahtumanTyyppi) t.getTyyppi()) {
 			case CAR_ARRIVES:
 				Asiakas uusiAsiakas = new Asiakas();
-				palvelupisteet[0].lisaaJonoon(uusiAsiakas);
+				for (Palvelupiste p : palvelupisteet) {
+					if (p.hasFreeSpot()) {
+						p.lisaaJonoon(uusiAsiakas);
+						break;
+					}
+				}
 				saapumisprosessi.generoiSeuraava();
 				break;
-
 			case DIAGNOSTIC_DONE:
 				a = palvelupisteet[0].otaJonosta();
 				palvelupisteet[1].lisaaJonoon(a);
@@ -100,5 +101,39 @@ public class OmaMoottori extends Moottori{
 		return Math.random() * 5 + 1;
 	}
 
-	
+	private void freeSpot(boolean isElectricCar) {
+		if (isElectricCar) {
+			availableElectricSpots++;
+		} else {
+			availableSpots++;
+		}
+
+		if (!waitingQueue.isEmpty()) {
+			Asiakas nextCustomer = waitingQueue.poll();
+			addCustomer(nextCustomer);
+		}
+	}
+
+
+	private boolean isElectricCar(Asiakas customer) {
+		return customer.getId() % 2 == 0;
+	}
+
+	private boolean addCustomer(Asiakas asiakas) {
+		if (isElectricCar(asiakas) && availableElectricSpots > 0) {
+			availableElectricSpots--;
+			palvelupisteet[0].lisaaJonoon(asiakas);
+			Trace.out(Trace.Level.INFO, "Electric car Asiakas " + asiakas.getId() + " added.");
+			return true;
+		} else if (!isElectricCar(asiakas) && availableSpots > 0) {
+			availableSpots--;
+			palvelupisteet[0].lisaaJonoon(asiakas);
+			Trace.out(Trace.Level.INFO, "Regular car Asiakas " + asiakas.getId() + " added.");
+			return true;
+		} else {
+			waitingQueue.add(asiakas);
+			Trace.out(Trace.Level.INFO, "Asiakas " + asiakas.getId() + " is waiting.");
+			return false;
+		}
+	}
 }

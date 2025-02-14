@@ -12,24 +12,29 @@ public class Palvelupiste {
 	private final TapahtumanTyyppi skeduloitavanTapahtumanTyyppi;
 
 
-	//JonoStartegia strategia; //optio: asiakkaiden järjestys
-	
+	private final int maxCapacity;
 	private boolean varattu = false;
 	private double totalBusyTime = 0;
 	private double lastStartTime = 0;
 
-
-	public Palvelupiste(ContinuousGenerator generator, Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi){
+	public Palvelupiste(ContinuousGenerator generator, Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi, int maxCapacity){
 		this.tapahtumalista = tapahtumalista;
 		this.generator = generator;
 		this.skeduloitavanTapahtumanTyyppi = tyyppi;
+		this.maxCapacity = maxCapacity;
 				
 	}
 
 
-	public void lisaaJonoon(Asiakas a){   // Jonon 1. asiakas aina palvelussa
-		jono.add(a);
-		
+	public boolean lisaaJonoon(Asiakas a) {
+		if (jono.size() < maxCapacity) {
+			jono.add(a);
+			Trace.out(Trace.Level.INFO, "Asiakas " + a.getId() + " lisätty jonoon.");
+			return true;
+		} else {
+			Trace.out(Trace.Level.INFO, "Jonossa ei ole tilaa asiakkaalle " + a.getId() + ". Asiakas joutuu odottamaan.");
+			return false;
+		}
 	}
 
 
@@ -69,6 +74,10 @@ public class Palvelupiste {
 	public double getUtilizationRate() {
 		double totalTime = Kello.getInstance().getAika();
 		return totalBusyTime / totalTime;
+	}
+
+	public boolean hasFreeSpot() {
+		return jono.size() < maxCapacity;
 	}
 
 
