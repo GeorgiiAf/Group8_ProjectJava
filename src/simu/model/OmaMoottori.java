@@ -4,8 +4,7 @@ import simu.framework.*;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class OmaMoottori extends Moottori{
 	
@@ -27,7 +26,7 @@ public class OmaMoottori extends Moottori{
 	//	this.totalSpots = 25;
 	//	this.electricSpots = 4;
 
-
+	//TODO I guess we should rename those in english
 		palvelupisteet = new Palvelupiste[3];
 
 		palvelupisteet[0]=new Palvelupiste(new Normal(10,6), tapahtumalista, TapahtumanTyyppi.DIAGNOSTIC_DONE);
@@ -75,6 +74,16 @@ public class OmaMoottori extends Moottori{
 				a.raportti();
 				break;
 		}
+	}
+
+	private void handleParts(Tapahtuma t) {
+		//FIXME move asiakas from diagnostics. asiakas must be available
+		Asiakas c = palvelupisteet[0].otaJonosta();
+
+		//TODO rest of the process
+		Palvelupiste p = palvelupisteet[1];
+		p.lisaaJonoon(c);
+
 	}
 
 	@Override

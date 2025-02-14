@@ -66,6 +66,10 @@ public class Palvelupiste {
 		return !jono.isEmpty();
 	}
 
+	public int getQueueSize() {
+		return this.jono.size();
+	}
+
 	public double getUtilizationRate() {
 		double totalTime = Kello.getInstance().getAika();
 		return totalBusyTime / totalTime;

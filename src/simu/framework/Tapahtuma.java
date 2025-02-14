@@ -1,13 +1,16 @@
 package simu.framework;
 
-public class Tapahtuma implements Comparable<Tapahtuma> {
+import simu.model.Asiakas;
 
+public class Tapahtuma implements Comparable<Tapahtuma> {
+	private Asiakas asiakas;
 	private ITapahtumanTyyppi tyyppi;
 	private double aika;
 	
-	public Tapahtuma(ITapahtumanTyyppi tyyppi, double aika){
+	public Tapahtuma(ITapahtumanTyyppi tyyppi, double aika, Asiakas asiakas) {
 		this.tyyppi = tyyppi;
 		this.aika = aika;
+		this.asiakas = asiakas;
 	}
 	
 	public void setTyyppi(ITapahtumanTyyppi tyyppi) {
@@ -21,6 +24,10 @@ public class Tapahtuma implements Comparable<Tapahtuma> {
 	}
 	public double getAika() {
 		return aika;
+	}
+
+	public Asiakas getAsiakas(){
+		return asiakas;
 	}
 
 	@Override

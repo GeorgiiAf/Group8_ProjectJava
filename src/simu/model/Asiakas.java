@@ -10,6 +10,8 @@ public class Asiakas {
 	private static int i = 1;
 	private static double sum = 0;
 
+	private int place; //Where this customer is
+
 	public Asiakas(){
 	    id = i++;
 	    
@@ -32,7 +34,6 @@ public class Asiakas {
 	public void setSaapumisaika(double saapumisaika) {
 		this.saapumisaika = saapumisaika;
 	}
-	
 
 
 	public int getId() {
