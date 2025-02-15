@@ -9,8 +9,8 @@ import java.util.*;
 public class OmaMoottori extends Moottori{
 	
 	private Saapumisprosessi saapumisprosessi;
-
 	private Palvelupiste[] palvelupisteet;
+	private List<Asiakas> customers = new ArrayList<>();
 
 /*
 	private final int totalSpots;
@@ -64,8 +64,7 @@ public class OmaMoottori extends Moottori{
 				break;
 
 			case WAITING_FOR_PARTS:
-				a = (Asiakas) palvelupisteet[1].otaJonosta();
-				palvelupisteet[2].lisaaJonoon(a);
+				handleParts(t);
 				break;
 
 			case CAR_READY:
@@ -74,6 +73,18 @@ public class OmaMoottori extends Moottori{
 				a.raportti();
 				break;
 		}
+	}
+
+	private void handleArrival(Tapahtuma t) {
+		Asiakas c = t.getAsiakas();
+		customers.add(c);
+		Palvelupiste p = palvelupisteet[1];
+		p.lisaaJonoon(c);
+
+	}
+
+	private Palvelupiste freeSpot(List[] servicePoint){
+//		return Arrays.stream(servicePoint
 	}
 
 	private void handleParts(Tapahtuma t) {
