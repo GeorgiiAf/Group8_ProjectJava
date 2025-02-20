@@ -26,7 +26,6 @@ public class OmaMoottori extends Moottori{
 	//	this.totalSpots = 25;
 	//	this.electricSpots = 4;
 
-	//TODO I guess we should rename those in english
 		palvelupisteet = new Palvelupiste[3];
 
 		palvelupisteet[0]=new Palvelupiste(new Normal(10,6), tapahtumalista, TapahtumanTyyppi.DIAGNOSTIC_DONE);
@@ -48,14 +47,11 @@ public class OmaMoottori extends Moottori{
 		Asiakas a;
 		switch ((TapahtumanTyyppi) t.getTyyppi()) {
 			case CAR_ARRIVES:
-				Asiakas uusiAsiakas = new Asiakas();
-				palvelupisteet[0].lisaaJonoon(uusiAsiakas);
-				saapumisprosessi.generoiSeuraava();
+				handleArrival(t);
 				break;
 
 			case DIAGNOSTIC_DONE:
-				a = palvelupisteet[0].otaJonosta();
-				palvelupisteet[1].lisaaJonoon(a);
+				handleDiagnostics(t);
 				break;
 
 			case PARTS_ORDERED:
@@ -76,15 +72,30 @@ public class OmaMoottori extends Moottori{
 	}
 
 	private void handleArrival(Tapahtuma t) {
-		Asiakas c = t.getAsiakas();
-		customers.add(c);
-		Palvelupiste p = palvelupisteet[1];
-		p.lisaaJonoon(c);
+		Asiakas uusiAsiakas =
+				new newCustomer(25.0, 10.0)
+					.buildCustomer();
+		palvelupisteet[0].lisaaJonoon(uusiAsiakas);
+		Palvelupiste p;
+		if (uusiAsiakas.isElectricCar()) {
+			//TODO logic
+		} else {
+
+		}
+
+		saapumisprosessi.generoiSeuraava();
 
 	}
 
-	private Palvelupiste freeSpot(List[] servicePoint){
-//		return Arrays.stream(servicePoint
+	private void handleDiagnostics(Tapahtuma t) {
+		Asiakas a = palvelupisteet[0].otaJonosta();
+
+		if(a.isNoPartsNeeded()){
+			palvelupisteet[2].lisaaJonoon(a);
+		}
+		else{
+			palvelupisteet[1].lisaaJonoon(a);
+		}
 	}
 
 	private void handleParts(Tapahtuma t) {

@@ -10,10 +10,15 @@ public class Asiakas {
 	private static int i = 1;
 	private static double sum = 0;
 
+	private final boolean isElectricCar;
+	private final boolean isNoPartsNeeded;
+
 	private int place; //Where this customer is
 
-	public Asiakas(){
-	    id = i++;
+	public Asiakas(boolean isElectricCar, boolean isNoPartsNeeded) {
+        this.isElectricCar = isElectricCar;
+		this.isNoPartsNeeded = isNoPartsNeeded;
+        id = i++;
 	    
 		saapumisaika = Kello.getInstance().getAika();
 		Trace.out(Trace.Level.INFO, "Uusi asiakas nro " + id + " saapui klo "+saapumisaika);
@@ -33,6 +38,14 @@ public class Asiakas {
 
 	public void setSaapumisaika(double saapumisaika) {
 		this.saapumisaika = saapumisaika;
+	}
+
+	public boolean isElectricCar() {
+		return this.isElectricCar;
+	}
+
+	public boolean isNoPartsNeeded() {
+		return this.isNoPartsNeeded;
 	}
 
 
