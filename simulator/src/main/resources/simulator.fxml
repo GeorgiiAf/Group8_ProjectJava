@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TextField?>
+
+<BorderPane fx:controller="controller.SimulaattorinController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@styles.css">
+    <left>
+        <VBox prefHeight="489.0" prefWidth="320.0" spacing="5.0" styleClass="vbox">
+            <children>
+                <Label text="PARAMETERS" styleClass="blue-background-label" />
+                <GridPane hgap="10" vgap="10" styleClass="left-padding">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                        <RowConstraints vgrow="SOMETIMES" minHeight="30" />
+                    </rowConstraints>
+                    <children>
+                        <!-- Regular Car Spots -->
+                        <VBox GridPane.rowIndex="0" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Regular Car Spots 🚙" styleClass="label" />
+                                <TextField fx:id="regularCarSpots" promptText="Enter number" styleClass="text-field" />
+                            </children>
+                        </VBox>
+
+                        <!-- Electric Car Spots -->
+                        <VBox GridPane.rowIndex="1" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Electric Car Spots 🚗⚡" styleClass="label" />
+                                <TextField fx:id="electricCarSpots" promptText="Enter number" styleClass="text-field" />
+                            </children>
+                        </VBox>
+
+                        <!-- Number of Customers -->
+                        <VBox GridPane.rowIndex="2" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Number of Customers 👥" styleClass="label" />
+                                <TextField fx:id="customerCount" promptText="Enter number" styleClass="text-field" />
+                            </children>
+                        </VBox>
+
+                        <!-- Parts Waiting Time -->
+                        <VBox GridPane.rowIndex="3" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Parts Waiting Time ⏳" styleClass="label" />
+                                <Slider fx:id="partsWaitingTimeSlider" min="1" max="10" value="5" />
+                            </children>
+                        </VBox>
+
+                        <!-- Regular Car Service Cost -->
+                        <VBox GridPane.rowIndex="4" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Regular Car Service Cost 💰" styleClass="label" />
+                                <TextField fx:id="regularCarServiceCost" promptText="Enter cost" styleClass="text-field" />
+                            </children>
+                        </VBox>
+
+                        <!-- Electric Car Service Cost -->
+                        <VBox GridPane.rowIndex="5" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Electric Car Service Cost 💰⚡" styleClass="label" />
+                                <TextField fx:id="electricCarServiceCost" promptText="Enter cost" styleClass="text-field" />
+                            </children>
+                        </VBox>
+
+                        <!-- Parts Cost -->
+                        <VBox GridPane.rowIndex="6" GridPane.columnIndex="0">
+                            <children>
+                                <Label text="Parts Cost 🛠️" styleClass="label" />
+                                <TextField fx:id="partsCost" promptText="Enter price" styleClass="text-field" />
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+
+                <!-- Simulation Control Section -->
+                <Label text="SIMULATION CONTROL" styleClass="blue-background-label" />
+                <HBox spacing="10.0">
+                    <children>
+                        <Button fx:id="startButton" text="Start 🚗" styleClass="start-button" />
+                        <Button fx:id="pauseButton" text="Pause ⏸️" styleClass="pause-button" />
+                        <Button fx:id="stopButton" text="Stop 🛑" styleClass="stop-button" />
+                    </children>
+                </HBox>
+            </children>
+
+
+            <VBox spacing="5.0" styleClass="left-padding">
+                <children>
+                    <Label text="Simulation Time (seconds):" styleClass="label" />
+                    <TextField fx:id="simulationTimeField" promptText="Enter time" styleClass="text-field" />
+
+                    <Label text="Delay (milliseconds):" styleClass="label" />
+                    <Slider fx:id="delaySlider" min="100" max="1000" value="500" />
+
+                    <HBox spacing="10.0">
+                        <children>
+                            <Button fx:id="speedUpButton" text="Speed Up ⏩" styleClass="control-button" />
+                            <Button fx:id="slowDownButton" text="Slow Down ⏪" styleClass="control-button" />
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <center>
+        <!-- Central Panel with Visualization -->
+        <AnchorPane prefHeight="727.0" prefWidth="581.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
+            <children>
+                <Canvas fx:id="workshopCanvas" height="572.0" width="577.0" styleClass="canvas" />
+                <ListView fx:id="logListView" layoutX="-1.0" layoutY="573.0" prefHeight="138.0" prefWidth="579.0" styleClass="list-view" />
+            </children>
+        </AnchorPane>
+    </center>
+
+    <right>
+        <!-- Right Panel with Simulation Status -->
+        <VBox prefHeight="200.0" prefWidth="200.0" spacing="5.0" styleClass="vbox">
+            <children>
+                <Label text="SIMULATION STATUS" styleClass="blue-background-label" />
+                <VBox spacing="5">
+                    <children>
+                        <!-- Rejected Customers -->
+                        <Label text="Rejected Customers: 😠" styleClass="status-label" />
+                        <Label fx:id="rejectedCustomersLabel" text="0" styleClass="label" />
+
+                        <!-- Earned Money -->
+                        <Label text="Earned Money: 💵" styleClass="status-label" />
+                        <Label fx:id="earnedMoneyLabel" text="0 $" styleClass="label" />
+
+                        <!-- Served Regular Cars -->
+                        <Label text="Served Regular Cars: 🚙" styleClass="status-label" />
+                        <Label fx:id="servedRegularCarsLabel" text="0" styleClass="label" />
+
+                        <!-- Served Electric Cars -->
+                        <Label text="Served Electric Cars: 🚗⚡" styleClass="status-label" />
+                        <Label fx:id="servedElectricCarsLabel" text="0" styleClass="label" />
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </right>
+
+    <bottom>
+        <!-- Bottom Panel with Logs -->
+        <VBox>
+            <TextArea fx:id="logTextArea" prefHeight="100.0" prefWidth="200.0" promptText="Simulation logs..." styleClass="text-field" />
+            <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="770.0">
+                <children>
+                    <Label fx:id="inputErrorLabel" textFill="RED" />
+                    <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="helpButton" text="help❓"  onAction="#handleHelpButton" styleClass="emoji-button" />
+                    <Button fx:id="showResultsButton" text="Show Results" onAction="#handleShowResultsButton" style="-fx-background-color: #A0B8F7; -fx-text-fill: white; -fx-font-weight: bold;" />
+                </children>
+            </HBox>
+        </VBox>
+    </bottom>
+
+    <top>
+        <!-- Top Panel with Title -->
+        <Label text="Car Workshop Simulator 🚗🔧" styleClass="title-label" BorderPane.alignment="CENTER" />
+    </top>
+</BorderPane>
