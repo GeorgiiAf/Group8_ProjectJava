@@ -11,7 +11,7 @@ import view.SimulaattorinGUI;
 public class Main {
     public static void main(String[] args) {
         Trace.setTraceLevel(Trace.Level.INFO);
-        SimulaattorinController ui = new SimulaattorinController(); // Создаем UI
+        SimulaattorinController ui = new SimulaattorinController();
         IKontrolleriForM kontrolleri = new Kontrolleri();
 
         OmaMoottori m = new OmaMoottori(kontrolleri);

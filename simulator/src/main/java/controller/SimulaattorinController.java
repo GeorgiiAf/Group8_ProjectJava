@@ -1,5 +1,20 @@
 package controller;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import java.awt.Point;
+import java.io.IOException;
+import java.util.List;
 
 
 /*
@@ -8,19 +23,6 @@ THAT SHOULD BE THE MAIN CONTOLLER
 
  */
 
-
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class SimulaattorinController {
 
@@ -35,6 +37,10 @@ public class SimulaattorinController {
     @FXML
     private Button showResultsButton;
     @FXML  private Button helpButton;
+    @FXML
+    private Canvas workshopCanvas;
+
+    private GraphicsContext gc;
 
 
 
@@ -43,8 +49,13 @@ public class SimulaattorinController {
         if (showResultsButton != null) {
             showResultsButton.setOnAction(event -> handleShowResultsButton());
         }
-    }
 
+        if (workshopCanvas != null) {
+            gc = workshopCanvas.getGraphicsContext2D();
+            gc.setFill(Color.LIGHTGRAY);
+            gc.fillRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
+        }
+    }
 
     public void setKontrolleri(IKontrolleriForV kontrolleri) {
         this.kontrolleri = kontrolleri;
@@ -120,4 +131,48 @@ public class SimulaattorinController {
             e.printStackTrace();
         }
     }
+
+
+    public void drawServicePoints() {
+        if (gc != null) {
+            gc.setFill(Color.BLUE);
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+
+            double x = 50;
+            double y = 100;
+            double width = 100;
+            double height = 50;
+
+            for (int i = 0; i < 3; i++) {
+                gc.fillRect(x, y, width, height);
+                gc.strokeRect(x, y, width, height);
+                x += 150;
+            }
+        }
+    }
+
+    public void drawQueues(int[] queueSizes) {
+        if (gc != null) {
+            gc.setFill(Color.RED);
+            double x = 50;
+            double y = 200;
+
+            for (int i = 0; i < queueSizes.length; i++) {
+                double queueHeight = queueSizes[i] * 10;
+                gc.fillRect(x, y - queueHeight, 100, queueHeight);
+                x += 150;
+            }
+        }
+    }
+
+    public void drawCustomers(List<Point> customerPositions) {
+        if (gc != null) {
+            gc.setFill(Color.GREEN);
+            for (Point p : customerPositions) {
+                gc.fillOval(p.x, p.y, 10, 10);
+            }
+        }
+    }
+
 }
