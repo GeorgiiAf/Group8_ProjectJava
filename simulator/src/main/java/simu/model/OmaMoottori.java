@@ -38,7 +38,7 @@ public class OmaMoottori extends Moottori{
 
 	}
 
-	private ArrayList<Palvelupiste> createPalvelupiste(int amount, int enginners, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
+    private ArrayList<Palvelupiste> createPalvelupiste(int amount, int enginners, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
 		ArrayList<Palvelupiste> servicePoints = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
 			servicePoints.add(new Palvelupiste(enginners, serviceTime, tapahtumalista, tapahtumanTyyppi));

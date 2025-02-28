@@ -8,7 +8,7 @@ import simu.model.OmaMoottori;
 
 public class Kontrolleri implements IKontrolleriForM, IKontrolleriForV {
 
-    private IMoottori moottori;
+    private OmaMoottori moottori;
     private SimulaattorinController ui;
 
     public Kontrolleri() {
@@ -21,7 +21,7 @@ public class Kontrolleri implements IKontrolleriForM, IKontrolleriForV {
         moottori.setSimulointiaika(ui.getAika());
         moottori.setViive(ui.getViive());
         ui.tyhjennaVisualisointi();
-        ((Thread) moottori).start();
+        moottori.aja();
     }
 
     @Override

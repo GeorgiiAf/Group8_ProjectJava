@@ -5,6 +5,8 @@ public abstract class Moottori {
 	private double simulointiaika = 0;
 	
 	private Kello kello;
+
+	private long viive = 0;
 	
 	protected Tapahtumalista tapahtumalista;
 
@@ -22,6 +24,14 @@ public abstract class Moottori {
 	public void setSimulointiaika(double aika) {
 		simulointiaika = aika;
 	}
+
+	public void setViive(long aika) {
+
+	}
+
+	public long getViive() {
+        return viive;
+    }
 	
 	
 	public void aja(){
