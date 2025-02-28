@@ -16,7 +16,7 @@ public class newCustomer {
 
     public Asiakas buildCustomer() {
         boolean isElectricCar = this.random.nextDouble() < (this.electricCarCustomers / 100.0);
-        boolean noPartsNeeded = this.random.nextDouble() < (this.electricCarCustomers / 100.0);
+        boolean noPartsNeeded = this.random.nextDouble() < (this.noPartsNeeded / 100.0);
 
         return new Asiakas(isElectricCar, noPartsNeeded);
     }

@@ -13,7 +13,7 @@ public class Asiakas {
 	private final boolean isElectricCar;
 	private final boolean isNoPartsNeeded;
 
-	private int place; //Where this customer is
+	private int currentQueueIndex; //Where this customer is
 
 	public Asiakas(boolean isElectricCar, boolean isNoPartsNeeded) {
         this.isElectricCar = isElectricCar;
@@ -22,6 +22,14 @@ public class Asiakas {
 	    
 		saapumisaika = Kello.getInstance().getAika();
 		Trace.out(Trace.Level.INFO, "Uusi asiakas nro " + id + " saapui klo "+saapumisaika);
+	}
+
+	public int getCurrentQueueIndex() {
+		return currentQueueIndex;
+	}
+
+	public void setCurrentQueueIndex(int currentQueueIndex) {
+		this.currentQueueIndex = currentQueueIndex;
 	}
 
 	public double getPoistumisaika() {

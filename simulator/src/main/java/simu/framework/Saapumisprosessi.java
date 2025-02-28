@@ -1,5 +1,6 @@
 package simu.framework;
-import eduni.distributions.ContinuousGenerator;
+import eduni.distributions.*;
+import simu.model.Asiakas;
 
 public class Saapumisprosessi {
 	
@@ -13,8 +14,9 @@ public class Saapumisprosessi {
 		this.tyyppi = tyyppi;
 	}
 
-	public void generoiSeuraava(){
-		Tapahtuma t = new Tapahtuma(tyyppi, Kello.getInstance().getAika()+generaattori.sample());
+	public void generoiSeuraava(Asiakas asiakas){
+		Trace.out(Trace.Level.INFO, "Generoi seuraava");
+		Tapahtuma t = new Tapahtuma(tyyppi, Kello.getInstance().getAika()+generaattori.sample(), asiakas);
 		tapahtumalista.lisaa(t);
 	}
 
