@@ -37,6 +37,14 @@ public abstract class Moottori {
 			Trace.out(Trace.Level.INFO, "\nC-vaihe:" );
 			yritaCTapahtumat();
 
+			synchronized (this) {
+				try {
+					Thread.sleep((100));
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+
+			}
 		}
 		tulokset();
 		

@@ -8,7 +8,7 @@ public class Main {
         Trace.setTraceLevel(Trace.Level.INFO);
 
         OmaMoottori m = new OmaMoottori();
-        m.setSimulointiaika(100);
+        m.setSimulointiaika(10000);
         m.aja();
     }
 }
