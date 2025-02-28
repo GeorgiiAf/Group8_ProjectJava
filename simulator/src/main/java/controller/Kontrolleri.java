@@ -17,7 +17,7 @@ public class Kontrolleri implements IKontrolleriForM, IKontrolleriForV {
 
     @Override
     public void kaynnistaSimulointi() {
-        moottori = new OmaMoottori(this);
+        moottori = new OmaMoottori();
         moottori.setSimulointiaika(ui.getAika());
         moottori.setViive(ui.getViive());
         ui.tyhjennaVisualisointi();

@@ -14,9 +14,9 @@ public class Main {
         SimulaattorinController ui = new SimulaattorinController();
         IKontrolleriForM kontrolleri = new Kontrolleri();
 
-        OmaMoottori m = new OmaMoottori(kontrolleri);
-        m.setSimulointiaika(100);
-        m.start();
+        OmaMoottori m = new OmaMoottori();
+        m.setSimulointiaika(1000);
+        m.aja();
         SimulaattorinGUI.launch(SimulaattorinGUI.class);
 
     }
