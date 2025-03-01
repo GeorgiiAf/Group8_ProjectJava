@@ -19,6 +19,18 @@ public class OmaMoottori extends Moottori{
 
 	ArrayList<ArrayList<Palvelupiste>> allServicePoints = new ArrayList<>();
 
+	private double totalEarnings = 0.0;
+	private int servedRegularCars = 0;
+	private int servedElectricCars = 0;
+	private int rejectedCustomers = 0;
+
+	private boolean simulointiLoppu = false;
+	private double simulointiaika;
+	private long viive;
+
+
+
+
 /*
 	private final int totalSpots;
 	private final int electricSpots;
@@ -37,6 +49,12 @@ public class OmaMoottori extends Moottori{
 
 
 	}
+
+
+	public ArrayList<ArrayList<Palvelupiste>> getAllServicePointsList() {
+		return allServicePoints;
+	}
+
 
 	private ArrayList<Palvelupiste> createPalvelupiste(int amount, int enginners, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
 		ArrayList<Palvelupiste> servicePoints = new ArrayList<>();
@@ -67,6 +85,9 @@ public class OmaMoottori extends Moottori{
 
 	@Override
 	protected void suoritaTapahtuma(Tapahtuma t) {
+		if (simulointiLoppu) {
+			return; // Прерываем выполнение, если симуляция завершена
+		}
 		switch ((TapahtumanTyyppi) t.getTyyppi()) {
 			case CAR_ARRIVES:
 				handleArrival(t);
@@ -148,6 +169,15 @@ public class OmaMoottori extends Moottori{
 	private void handleCarReady(Tapahtuma t) {
 		Asiakas a = this.carReady.get(t.getAsiakas().getCurrentQueueIndex()).otaJonosta();
 		a.setPoistumisaika(Kello.getInstance().getAika());
+
+		// Обновление статистики
+		totalEarnings += a.calculateServiceCost();
+		if (a.isElectricCar()) {
+			servedElectricCars++;
+		} else {
+			servedRegularCars++;
+		}
+
 		a.raportti();
 	}
 
@@ -185,7 +215,10 @@ public class OmaMoottori extends Moottori{
 	@Override
 	protected void tulokset() {
 		System.out.println("Simulointi päättyi kello " + Kello.getInstance().getAika());
-		System.out.println("Tulokset ... puuttuvat vielä");
+		System.out.println("Total earnings: " + totalEarnings);
+		System.out.println("Served regular cars: " + servedRegularCars);
+		System.out.println("Served electric cars: " + servedElectricCars);
+		System.out.println("Rejected customers: " + rejectedCustomers);
 	}
 
 	private boolean osatSaatavilla(){
@@ -196,5 +229,42 @@ public class OmaMoottori extends Moottori{
 		return Math.random() * 5 + 1;
 	}
 
-	
+	public double calculateTotalEarnings() {
+		return totalEarnings;
+	}
+
+	public int getServedRegularCars() {
+		return servedRegularCars;
+	}
+
+	public int getServedElectricCars() {
+		return servedElectricCars;
+	}
+
+	public int getRejectedCustomers() {
+		return rejectedCustomers;
+	}
+
+
+	public void setSimulointiLoppu(boolean lopeta) {
+		this.simulointiLoppu = lopeta;
+	}
+	public void setSimulointiAika(double aika) {
+		if (aika <= 0) {
+			throw new IllegalArgumentException("Simulation time must be greater than 0");
+		}
+		this.simulointiaika = aika;
+	}
+
+
+	public void setViive(long viive) {
+		if (viive < 0) {
+			throw new IllegalArgumentException("Delay must be non-negative");
+		}
+		this.viive = viive;
+	}
+
+	public long getViive() {
+		return viive;
+	}
 }

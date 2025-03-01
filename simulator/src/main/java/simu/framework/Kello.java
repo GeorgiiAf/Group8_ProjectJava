@@ -23,4 +23,5 @@ public class Kello {
 	public double getAika(){
 		return aika;
 	}
+	
 }
