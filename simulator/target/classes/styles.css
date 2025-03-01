@@ -92,3 +92,6 @@
 .left-padding {
     -fx-padding: 0 0 0 20;
 }
+.canvas {
+    -fx-background-color: lightgray;
+}

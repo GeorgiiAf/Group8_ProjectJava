@@ -15,7 +15,7 @@ public class Main {
         controller = new SimulaattorinController();
         controller.setMoottori(m);
 
-        m.setSimulointiaika(10000);
+        m.setSimulointiaika(100);
         m.aja();
         SimulaattorinGUI.launch(SimulaattorinGUI.class);
 
