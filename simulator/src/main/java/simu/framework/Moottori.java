@@ -1,4 +1,4 @@
-package simu.framework;
+package simu.framework;			// I DKN  REWORK/DELETE
 
 	public abstract class Moottori {
 

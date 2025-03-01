@@ -86,7 +86,7 @@ public class OmaMoottori extends Moottori{
 	@Override
 	protected void suoritaTapahtuma(Tapahtuma t) {
 		if (simulointiLoppu) {
-			return; // Прерываем выполнение, если симуляция завершена
+			return;
 		}
 		switch ((TapahtumanTyyppi) t.getTyyppi()) {
 			case CAR_ARRIVES:
@@ -170,7 +170,6 @@ public class OmaMoottori extends Moottori{
 		Asiakas a = this.carReady.get(t.getAsiakas().getCurrentQueueIndex()).otaJonosta();
 		a.setPoistumisaika(Kello.getInstance().getAika());
 
-		// Обновление статистики
 		totalEarnings += a.calculateServiceCost();
 		if (a.isElectricCar()) {
 			servedElectricCars++;

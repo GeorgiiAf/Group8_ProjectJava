@@ -3,6 +3,8 @@ package controller;
 
 public interface IKontrolleriForV {
 
+    //  ALSO MIGHT BE DELETED OR REWORKED
+
     double getTotalEarnings();
     int getServedRegularCars();
     int getServedElectricCars();

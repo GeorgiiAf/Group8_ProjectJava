@@ -11,7 +11,8 @@ public class Main {
     public static void main(String[] args) {
         Trace.setTraceLevel(Trace.Level.INFO);
         OmaMoottori m = new OmaMoottori();
-        SimulaattorinController controller = new SimulaattorinController();
+        SimulaattorinController controller;
+        controller = new SimulaattorinController();
         controller.setMoottori(m);
 
         m.setSimulointiaika(10000);

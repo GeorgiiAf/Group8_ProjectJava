@@ -69,8 +69,4 @@ public class SimulaattorinGUI extends Application {
         this.tulos.setText(formatter.format(aika));
     }
 
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

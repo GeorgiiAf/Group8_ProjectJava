@@ -1,4 +1,9 @@
 package controller;
+
+//  REWORK  THIS
+
+
+
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +30,9 @@ import java.util.List;
 
 /*
 THAT SHOULD BE THE MAIN CONTROLLER
+
+
+REWORK
 */
 
 public class SimulaattorinController {
@@ -41,6 +49,8 @@ public class SimulaattorinController {
     @FXML private Label tulos;
     @FXML private Button startButton;
     @FXML private Button stopButton;
+    @FXML private Button pauseButton;
+
 
     @FXML private Canvas naytto;
     @FXML private Button showResultsButton;
@@ -77,6 +87,7 @@ public class SimulaattorinController {
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                System.out.println("Updating visualization...");
                 updateVisualisation();
             }
         };
@@ -131,6 +142,8 @@ public class SimulaattorinController {
     private void handleStartButton() {
         double simulationTime = getAika();
         long delay = getViive();
+        System.out.println("Start button clicked"); // Отладочный вывод
+
 
         if (simulationTime <= 0 || delay < 0) {
             showErrorMessage("Please enter valid values");
@@ -145,8 +158,6 @@ public class SimulaattorinController {
         if (inputErrorLabel != null) {
             inputErrorLabel.setVisible(false);
         }
-
-        moottori = new OmaMoottori();
 
         Trace.setTraceLevel(Level.INFO);
 

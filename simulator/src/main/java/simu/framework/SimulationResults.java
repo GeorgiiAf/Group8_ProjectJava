@@ -1,5 +1,5 @@
 package simu.framework;
-
+// REWORK THIS
 public class SimulationResults {
     private final double totalEarnings;
     private final int servedRegularCars;
