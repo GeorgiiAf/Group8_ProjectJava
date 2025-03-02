@@ -1,4 +1,4 @@
-package simu.framework;         // DELETE
+package simu.framework;
 
 public interface ITapahtumanTyyppi {
 }

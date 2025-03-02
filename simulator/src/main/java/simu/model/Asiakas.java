@@ -6,7 +6,7 @@ import simu.framework.*;
 public class Asiakas {
 	private double saapumisaika;
 	private double poistumisaika;
-	private int id;
+	private final int id;
 	private static int i = 1;
 	private static double sum = 0;
 
@@ -72,19 +72,16 @@ public class Asiakas {
 	}
 
 public double calculateServiceCost() {
-    double baseCost = 100.0; // Базовая стоимость
+    double baseCost = 100.0;
 
-    // Если машина электрическая, стоимость выше
     if (isElectricCar()) {
         baseCost += 50.0;
     }
 
-    // Если были заказаны запчасти, добавляем стоимость
     if (!isNoPartsNeeded()) {
         baseCost += 200.0;
     }
 
-    // Время пребывания также влияет на стоимость
     double timeSpent = getPoistumisaika() - getSaapumisaika();
     baseCost += timeSpent * 2.0;
 

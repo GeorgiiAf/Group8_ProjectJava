@@ -159,6 +159,11 @@ public class SimulaattorinController {
             inputErrorLabel.setVisible(false);
         }
 
+        if (moottori == null) {
+            moottori = new OmaMoottori();
+        }
+
+
         Trace.setTraceLevel(Level.INFO);
 
         simulationThread = new Thread(() -> {
