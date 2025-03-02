@@ -1,14 +1,15 @@
-package simu.framework;
+package simu.framework;			// I DKN  REWORK/DELETE
 
-public abstract class Moottori {
-	
-	private double simulointiaika = 0;
-	
-	private Kello kello;
+	public abstract class Moottori {
 
-	private long viive = 0;
-	
-	protected Tapahtumalista tapahtumalista;
+		private double simulointiaika = 0;
+
+		private Kello kello;
+
+		protected Tapahtumalista tapahtumalista;
+		private long viive = 0;
+
+
 
 	public Moottori(){
 
@@ -21,19 +22,20 @@ public abstract class Moottori {
 		
 	}
 
+
 	public void setSimulointiaika(double aika) {
 		simulointiaika = aika;
 	}
 
-	public void setViive(long aika) {
-
+	public void setViive(long viive) {
+		this.viive = viive;
 	}
 
 	public long getViive() {
-        return viive;
-    }
-	
-	
+		return viive;
+	}
+
+
 	public void aja(){
 		alustukset(); // luodaan mm. ensimmäinen tapahtuma
 		while (simuloidaan()){
@@ -80,5 +82,10 @@ public abstract class Moottori {
 	protected abstract void alustukset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 
 	protected abstract void tulokset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
-	
+
+
+
+	public Kello getKello() {
+			return Kello.getInstance();
+		}
 }

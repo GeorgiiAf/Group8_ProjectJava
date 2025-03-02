@@ -1,5 +1,5 @@
 package view;
-
+//  DELETE THIS
 
 public interface IVisualisointi {
 

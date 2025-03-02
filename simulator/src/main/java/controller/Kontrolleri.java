@@ -1,70 +1,98 @@
 package controller;
-
-
-import javafx.application.Platform;
-import simu.framework.IMoottori;
+//  REWORK THIS
 import simu.model.OmaMoottori;
 
-
-public class Kontrolleri implements IKontrolleriForM, IKontrolleriForV {
+public class Kontrolleri implements IKontrolleriForV {
 
     private OmaMoottori moottori;
-    private SimulaattorinController ui;
+    private double simulointiAika;
+    private long viive;
+
+    private double totalEarnings;
+    private int servedRegularCars;
+    private int servedElectricCars;
+    private int rejectedCustomers;
 
     public Kontrolleri() {
-        this.ui = (SimulaattorinController) ui;
+        moottori = new OmaMoottori();
     }
 
     @Override
     public void kaynnistaSimulointi() {
-        moottori = new OmaMoottori();
-        moottori.setSimulointiaika(ui.getAika());
-        moottori.setViive(ui.getViive());
-        ui.tyhjennaVisualisointi();
-        moottori.aja();
+        moottori.setSimulointiAika(simulointiAika);
+        moottori.setViive(viive);
+
+        Thread simulointiThread = new Thread(() -> {
+            moottori.aja();
+            updateResults();
+        });
+
+        simulointiThread.start();
     }
 
-    @Override
-    public void hidasta() {
-        moottori.setViive((long) (moottori.getViive() * 1.10));
+    private void updateResults() {
+
+        this.totalEarnings = moottori.calculateTotalEarnings();
+        this.servedRegularCars = moottori.getServedRegularCars();
+        this.servedElectricCars = moottori.getServedElectricCars();
+        this.rejectedCustomers = moottori.getRejectedCustomers();
     }
 
     @Override
     public void nopeuta() {
-        moottori.setViive((long) (moottori.getViive() * 0.9));
+        moottori.setViive((long)(moottori.getViive() * 0.5));
     }
 
     @Override
-    public void naytaLoppuaika(double aika) {
-        Platform.runLater(() -> ui.setLoppuaika(aika));
+    public void hidasta() {
+        moottori.setViive((long)(moottori.getViive() * 1.5));
     }
 
-    @Override
-    public void visualisoiAsiakas() {
-        Platform.runLater(() -> ui.uusiAsiakas());
+    public void setSimulointiAika(double aika) {
+        this.simulointiAika = aika;
     }
 
+    public void setViive(long viive) {
+        this.viive = viive;
+    }
 
     @Override
     public double getTotalEarnings() {
-        return 1000.50;
+        return totalEarnings;
     }
 
     @Override
     public int getServedRegularCars() {
-        return 15;
+        return servedRegularCars;
     }
 
     @Override
     public int getServedElectricCars() {
-        return 10;
+        return servedElectricCars;
     }
 
     @Override
     public int getRejectedCustomers() {
-        return 5;
+        return rejectedCustomers;
+    }
+
+    @Override
+    public void setTotalEarnings(double earnings) {
+        this.totalEarnings = earnings;
+    }
+
+    @Override
+    public void setServedRegularCars(int count) {
+        this.servedRegularCars = count;
+    }
+
+    @Override
+    public void setServedElectricCars(int count) {
+        this.servedElectricCars = count;
+    }
+
+    @Override
+    public void setRejectedCustomers(int count) {
+        this.rejectedCustomers = count;
     }
 }
-
-
-

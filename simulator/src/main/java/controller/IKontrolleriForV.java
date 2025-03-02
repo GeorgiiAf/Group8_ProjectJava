@@ -1,14 +1,21 @@
 package controller;
 
+
 public interface IKontrolleriForV {
 
-    // Rajapinta, joka tarjotaan  käyttöliittymälle:
+    //  ALSO MIGHT BE DELETED OR REWORKED
 
-    public void kaynnistaSimulointi();
-    public void nopeuta();
-    public void hidasta();
     double getTotalEarnings();
     int getServedRegularCars();
     int getServedElectricCars();
     int getRejectedCustomers();
+
+    void setTotalEarnings(double earnings);
+    void setServedRegularCars(int count);
+    void setServedElectricCars(int count);
+    void setRejectedCustomers(int count);
+
+    void kaynnistaSimulointi();
+    void nopeuta();
+    void hidasta();
 }

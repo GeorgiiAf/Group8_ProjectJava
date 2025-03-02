@@ -1,5 +1,6 @@
 package simu.framework;
 
+//  DELETE THIS
 public interface IMoottori { // UUSI
 		
 	// Kontrolleri käyttää tätä rajapintaa

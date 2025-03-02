@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.TextField?>
 
@@ -109,10 +108,10 @@
             <VBox spacing="5.0" styleClass="left-padding">
                 <children>
                     <Label text="Simulation Time (seconds):" styleClass="label" />
-                    <TextField fx:id="simulationTimeField" promptText="Enter time" styleClass="text-field" />
+                    <TextField fx:id="aika" promptText="Enter time" styleClass="text-field" />
 
                     <Label text="Delay (milliseconds):" styleClass="label" />
-                    <Slider fx:id="delaySlider" min="100" max="1000" value="500" />
+                    <TextField fx:id="viive" promptText="Enter delay" styleClass="text-field" />
 
                     <HBox spacing="10.0">
                         <children>
@@ -129,11 +128,9 @@
     <center>
         <!-- Central Panel with Visualization -->
         <AnchorPane prefHeight="727.0" prefWidth="581.0" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets left="10.0" right="10.0" />
-            </BorderPane.margin>
             <children>
                 <Canvas fx:id="workshopCanvas" height="572.0" width="577.0" styleClass="canvas" />
+                <Canvas fx:id="naytto" layoutY="572.0" width="577.0" height="100.0" />
                 <ListView fx:id="logListView" layoutX="-1.0" layoutY="573.0" prefHeight="138.0" prefWidth="579.0" styleClass="list-view" />
             </children>
         </AnchorPane>
@@ -148,7 +145,7 @@
                     <children>
                         <!-- Rejected Customers -->
                         <Label text="Rejected Customers: 😠" styleClass="status-label" />
-                        <Label fx:id="rejectedCustomersLabel" text="0" styleClass="label" />
+                        <Label fx:id="tulos" text="0" styleClass="label" />
 
                         <!-- Earned Money -->
                         <Label text="Earned Money: 💵" styleClass="status-label" />
