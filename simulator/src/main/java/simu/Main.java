@@ -1,9 +1,6 @@
 package simu;
 
 
-import simu.framework.Trace;
-import simu.model.OmaMoottori;
-import controller.SimulaattorinController;
 import view.SimulaattorinGUI;
 
 

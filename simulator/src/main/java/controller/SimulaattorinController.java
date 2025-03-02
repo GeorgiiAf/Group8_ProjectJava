@@ -3,6 +3,7 @@ package controller;
 //  REWORK  THIS
 
 
+import java.awt.Point;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -23,7 +24,6 @@ import simu.model.OmaMoottori;
 import simu.model.Palvelupiste;
 
 
-import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,19 +62,19 @@ public class SimulaattorinController {
     @FXML
     private void initialize() {
         if (showResultsButton != null) {
-            showResultsButton.setOnAction(event -> handleShowResultsButton());
+            showResultsButton.setOnAction(_ -> handleShowResultsButton());
         }
 
         if (helpButton != null) {
-            helpButton.setOnAction(event -> handleHelpButton());
+            helpButton.setOnAction(_ -> handleHelpButton());
         }
 
         if (startButton != null) {
-            startButton.setOnAction(event -> handleStartButton());
+            startButton.setOnAction(_ -> handleStartButton());
         }
 
         if (stopButton != null) {
-            stopButton.setOnAction(event -> handleStopButton());
+            stopButton.setOnAction(_ -> handleStopButton());
         }
 
         if (workshopCanvas != null) {
@@ -272,9 +272,6 @@ public class SimulaattorinController {
         }
     }
 
-
-
-
     private void updateResultsFromMoottori() {
         if (moottori == null || kontrolleri == null) {
             return;
@@ -335,55 +332,38 @@ public class SimulaattorinController {
             return;
         }
 
+        gc.clearRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
+
         drawServicePoints();
 
         ArrayList<ArrayList<Palvelupiste>> allServicePoints = moottori.getAllServicePointsList();
         if (allServicePoints == null || allServicePoints.isEmpty()) {
             return;
         }
-
-        double x = 160;
-        double baseY = 75;
-
+        int[] queueSizes = new int[allServicePoints.size()];
         for (int i = 0; i < allServicePoints.size(); i++) {
-            ArrayList<Palvelupiste> servicePoints = allServicePoints.get(i);
-            Color queueColor;
-
-            switch (i) {
-                case 0: queueColor = Color.SKYBLUE; break;      // Arrival
-                case 1: queueColor = Color.LIGHTGREEN; break;   // Diagnostics
-                case 2: queueColor = Color.YELLOW; break;       // Parts
-                case 3: queueColor = Color.CORAL; break;        // Car Ready
-                default: queueColor = Color.GRAY;
-            }
-
-            double y = baseY + i * 100;
-
-            for (int j = 0; j < servicePoints.size(); j++) {
-                Palvelupiste servicePoint = servicePoints.get(j);
-                int queueSize = servicePoint.getQueueSize();
-
-                gc.setFill(queueColor);
-                for (int k = 0; k < queueSize; k++) {
-                    gc.fillOval(x + k * 15, y, 10, 10);
-                }
-
-                gc.setFill(Color.BLACK);
-                gc.fillText("Q: " + queueSize, x + 180, y + 10);
-            }
+            queueSizes[i] = allServicePoints.get(i).size();
         }
+        drawQueues(queueSizes);
+
+        List<Point> customerPositions = new ArrayList<>();
+        for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
+            for (Palvelupiste servicePoint : servicePoints) {
+                customerPositions.add(new Point(100, 100));            }
+        }
+        drawCustomers(customerPositions);
     }
 
     public void drawQueues(int[] queueSizes) {
         if (gc != null) {
-            gc.setFill(Color.RED);
+            gc.setFill(Color.ORANGE);
             double x = 50;
             double y = 200;
 
-            for (int i = 0; i < queueSizes.length; i++) {
-                double queueHeight = queueSizes[i] * 10;
-                gc.fillRect(x, y - queueHeight, 100, queueHeight);
-                x += 150;
+            for (int queueSize : queueSizes) {
+                double queueHeight = queueSize * 5;
+                gc.fillRect(x, y - queueHeight, 50, queueHeight);
+                x += 100;
             }
         }
     }
