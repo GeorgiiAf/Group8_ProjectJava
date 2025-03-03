@@ -25,6 +25,13 @@ public class OmaMoottori extends Moottori{
 	private int servedElectricCars = 0;
 	private int rejectedCustomers = 0;
 
+	private int regularCarSpots = 0;
+	private int electricCarSpots = 0;
+	private int customerCount = 0;
+	private int regularCarServiceCost = 0;
+	private int electricCarServiceCost = 0;
+	private int partsCost = 0;
+
 	private boolean simulointiLoppu = false;
 	private double simulointiaika;
 	private long viive;
@@ -34,6 +41,15 @@ public class OmaMoottori extends Moottori{
 		saapumisprosessi = new Saapumisprosessi(new Negexp(3), tapahtumalista, TapahtumanTyyppi.CAR_ARRIVES);
 
 
+	}
+
+	public void setValues(int regularCarSpots, int electricCarSpots, int customerCount, int regularCarServiceCost, int electricCarServiceCost, int partsCost){
+		this.regularCarSpots = regularCarSpots;
+		this.electricCarSpots = electricCarSpots;
+		this.electricCarServiceCost = electricCarServiceCost;
+		this.partsCost = partsCost;
+		this.customerCount = customerCount;
+		this.regularCarServiceCost = regularCarServiceCost;
 	}
 
 
@@ -52,6 +68,11 @@ public class OmaMoottori extends Moottori{
 	@Override
 	protected void alustukset() {
 		saapumisprosessi.generoiSeuraava(new newCustomer(25.0, 10.0).buildCustomer());
+		this.servedElectricCars = 0;
+		this.servedRegularCars = 0;
+		this.totalEarnings = 0.0;
+		this.rejectedCustomers = 0;
+
 		this.arrival.clear();
 		this.diagnostics.clear();
 		this.parts.clear();

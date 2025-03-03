@@ -59,7 +59,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 			}
 		}
 		tulokset();
-		
+		kello.resetAika();
 	}
 	
 	private void suoritaBTapahtumat(){

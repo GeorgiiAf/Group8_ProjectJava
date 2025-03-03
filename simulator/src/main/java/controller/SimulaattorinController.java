@@ -51,6 +51,14 @@ public class SimulaattorinController {
     @FXML private Button stopButton;
     @FXML private Button pauseButton;
 
+    @FXML private TextField regularCarSpots;
+    @FXML private TextField electricCarSpots;
+    @FXML private TextField customerCount;
+
+    @FXML private TextField regularCarServiceCost;
+    @FXML private TextField electricCarServiceCost;
+    @FXML private TextField partsCost;
+
 
     @FXML private Canvas naytto;
     @FXML private Button showResultsButton;
@@ -171,6 +179,14 @@ public class SimulaattorinController {
                 simulationRunning = true;
                 moottori.setSimulointiaika(simulationTime);
                 moottori.setViive(delay);
+                moottori.setValues(
+                        Integer.parseInt(regularCarSpots.getText()),
+                        Integer.parseInt(electricCarSpots.getText()),
+                        Integer.parseInt(customerCount.getText()),
+                        Integer.parseInt(regularCarServiceCost.getText()),
+                        Integer.parseInt(electricCarServiceCost.getText()),
+                        Integer.parseInt(partsCost.getText())
+                );
                 moottori.aja();
             } catch (Exception e) {
                 e.printStackTrace();
