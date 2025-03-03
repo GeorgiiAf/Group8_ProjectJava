@@ -2,7 +2,7 @@ package controller;
 
 
 /*
-Contoller for RESULTS  window
+Controller for RESULTS  window
 
 
  */

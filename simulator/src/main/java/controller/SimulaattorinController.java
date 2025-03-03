@@ -12,9 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -38,6 +36,14 @@ REWORK
 public class SimulaattorinController {
 
     public Label inputErrorLabel;
+    public Label earnedMoneyLabel;
+    public Label servedRegularCarsLabel;
+    public Label servedElectricCarsLabel;
+    public TextArea logTextArea;
+    public Button slowDownButton;
+    public Button speedUpButton;
+    public ListView logListView;
+    public Slider partsWaitingTimeSlider;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;
@@ -83,6 +89,13 @@ public class SimulaattorinController {
 
         if (stopButton != null) {
             stopButton.setOnAction(_ -> handleStopButton());
+        }
+
+        if (speedUpButton != null) {
+            speedUpButton.setOnAction(_ -> handleSpeedUpButton());
+        }
+        if (slowDownButton != null) {
+            slowDownButton.setOnAction(_ -> handleSlowDownButton());
         }
 
         if (workshopCanvas != null) {
@@ -392,4 +405,25 @@ public class SimulaattorinController {
             }
         }
     }
+
+
+    @FXML
+    private void handleSpeedUpButton() {
+        if (moottori != null) {
+            long currentDelay = moottori.getViive();
+            if (currentDelay > 100) {
+                moottori.setViive(currentDelay - 100);
+            }
+        }
+    }
+
+    @FXML
+    private void handleSlowDownButton() {
+        if (moottori != null) {
+            long currentDelay = moottori.getViive();
+            moottori.setViive(currentDelay + 100);
+        }
+    }
+
+
 }
