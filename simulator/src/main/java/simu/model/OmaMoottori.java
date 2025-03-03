@@ -16,6 +16,7 @@ public class OmaMoottori extends Moottori{
 	ArrayList<Palvelupiste> diagnostics = new ArrayList<>();
 	ArrayList<Palvelupiste> parts = new ArrayList<>();
 	ArrayList<Palvelupiste> carReady = new ArrayList<>();
+	ArrayList<Palvelupiste> simpleMaintenance = new ArrayList<>();
 
 	ArrayList<ArrayList<Palvelupiste>> allServicePoints = new ArrayList<>();
 
@@ -28,22 +29,7 @@ public class OmaMoottori extends Moottori{
 	private double simulointiaika;
 	private long viive;
 
-
-
-
-/*
-	private final int totalSpots;
-	private final int electricSpots;
-	private int availableSpots;
-	private int availableElectricSpots;
-	private Queue<Asiakas> regularQueue = new LinkedList<>();
-	private Queue<Asiakas> electricQueue = new LinkedList<>();
-*/
-
 	public OmaMoottori(){
-
-	//	this.totalSpots = 25;
-	//	this.electricSpots = 4;
 
 		saapumisprosessi = new Saapumisprosessi(new Negexp(3), tapahtumalista, TapahtumanTyyppi.CAR_ARRIVES);
 
@@ -56,10 +42,10 @@ public class OmaMoottori extends Moottori{
 	}
 
 
-	private ArrayList<Palvelupiste> createPalvelupiste(int amount, int enginners, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
+	private ArrayList<Palvelupiste> createPalvelupiste(int amount, int mechanics, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
 		ArrayList<Palvelupiste> servicePoints = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
-			servicePoints.add(new Palvelupiste(enginners, serviceTime, tapahtumalista, tapahtumanTyyppi));
+			servicePoints.add(new Palvelupiste(mechanics, serviceTime, tapahtumalista, tapahtumanTyyppi));
 		}
 		return servicePoints;
 	}
@@ -70,15 +56,18 @@ public class OmaMoottori extends Moottori{
 		this.diagnostics.clear();
 		this.parts.clear();
 		this.carReady.clear();
+		this.simpleMaintenance.clear();
 
 		this.arrival.addAll(createPalvelupiste(15, 10, new Normal(10, 2), TapahtumanTyyppi.CAR_ARRIVES));
 		this.diagnostics.addAll(createPalvelupiste(10, 5, new Normal(30, 10), TapahtumanTyyppi.DIAGNOSTIC_DONE));
 		this.parts.addAll(createPalvelupiste(4, 5, new Normal(60, 30), TapahtumanTyyppi.PARTS_ORDERED));
-		this.carReady.addAll(createPalvelupiste(10, 20, new Normal(15, 2), TapahtumanTyyppi.CAR_READY));
+		this.simpleMaintenance.addAll(createPalvelupiste(10, 10, new Normal(30, 15), TapahtumanTyyppi.SIMPLE_MAINTENANCE));
+		this.carReady.addAll(createPalvelupiste(10, 5, new Normal(15, 2), TapahtumanTyyppi.CAR_READY));
 
 		this.allServicePoints.add(arrival);
 		this.allServicePoints.add(diagnostics);
 		this.allServicePoints.add(parts);
+		this.allServicePoints.add(simpleMaintenance);
 		this.allServicePoints.add(carReady);
 
 	}
@@ -97,15 +86,13 @@ public class OmaMoottori extends Moottori{
 				handleDiagnostics(t);
 				break;
 
-				//TODO
-
 			case PARTS_ORDERED:
 				handleParts(t);
 				break;
 
-//			case WAITING_FOR_PARTS:
-//				handleParts(t);
-//				break;
+			case SIMPLE_MAINTENANCE:
+				handleMaintenance(t);
+				break;
 
 			case CAR_READY:
 				Trace.out(Trace.Level.INFO, "CAR READY");
@@ -119,12 +106,6 @@ public class OmaMoottori extends Moottori{
 				new newCustomer(25.0, 10.0)
 					.buildCustomer();
 		customers.add(uusiAsiakas);
-//		if (uusiAsiakas.isElectricCar()) {
-//			shortestQueuePalvelupiste = palvelupisteet[2];
-//		} else {
-//			// Assign regular cars to the shortest queue
-//			shortestQueuePalvelupiste = shortestQueue(palvelupisteet);
-//		}
 
 		Palvelupiste q = shortestQueue(this.diagnostics);
 		q.lisaaJonoon(uusiAsiakas);
@@ -139,10 +120,10 @@ public class OmaMoottori extends Moottori{
 
 		if (a.isNoPartsNeeded()) {
 
-			Palvelupiste q = shortestQueue(this.carReady);
+			Palvelupiste q = shortestQueue(this.simpleMaintenance);
 			q.lisaaJonoon(a);
-			a.setCurrentQueueIndex(this.carReady.indexOf(q));
-			Trace.out(Trace.Level.INFO, "Customer " + a.getId() + " moved to CAR_READY queue.");
+			a.setCurrentQueueIndex(this.simpleMaintenance.indexOf(q));
+			Trace.out(Trace.Level.INFO, "Customer " + a.getId() + " moved to SIMPLE_MAINTENANCE queue.");
 		} else {
 
 			Palvelupiste q = shortestQueue(this.parts);
@@ -164,6 +145,19 @@ public class OmaMoottori extends Moottori{
 
 		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " moved to CAR_READY queue. Queue size: " + q.getQueueSize());
 
+	}
+
+	private void handleMaintenance(Tapahtuma t) {
+		Asiakas c = this.simpleMaintenance.get(t.getAsiakas().getCurrentQueueIndex()).otaJonosta();
+
+		Palvelupiste q = shortestQueue(this.carReady);
+		q.lisaaJonoon(c);
+
+		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " simple maintenance complete.");
+
+		c.setCurrentQueueIndex(this.carReady.indexOf(q));
+
+		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " moved to CAR_READY queue. Queue size: " + q.getQueueSize());
 	}
 
 	private void handleCarReady(Tapahtuma t) {
@@ -205,7 +199,7 @@ public class OmaMoottori extends Moottori{
 			for (Palvelupiste p : servicePointList) {
 				if (!p.onVarattu() && p.onJonossa()) {
 
-					p.yritaAloitaPalvelu();
+					p.aloitaPalvelu();
 				}
 			}
 		}
@@ -218,14 +212,6 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Served regular cars: " + servedRegularCars);
 		System.out.println("Served electric cars: " + servedElectricCars);
 		System.out.println("Rejected customers: " + rejectedCustomers);
-	}
-
-	private boolean osatSaatavilla(){
-		return Math.random() < 0.7;
-	}
-
-	private double generateWaitingTime(){
-		return Math.random() * 5 + 1;
 	}
 
 	public double calculateTotalEarnings() {

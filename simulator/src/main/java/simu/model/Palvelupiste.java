@@ -46,7 +46,7 @@ public class Palvelupiste {
 		return jono.poll();
 	}
 
-	public void yritaAloitaPalvelu() {
+	public void aloitaPalvelu() {
 		Trace.out(Trace.Level.INFO, "Attempting to start service at " + skeduloitavanTapahtumanTyyppi + ". Engineers: " + availableEngineers + ", Queue: " + jono.size());
 		if (availableEngineers > 0 && !jono.isEmpty()) {
 			availableEngineers--;
@@ -59,26 +59,6 @@ public class Palvelupiste {
 			tapahtumalista.lisaa(t);
 		}
 	}
-	//TODO remove
-	public void palveluValmis() {
-		availableEngineers++;
-		Trace.out(Trace.Level.INFO, "Engineer freed at " + skeduloitavanTapahtumanTyyppi + " Available: " + availableEngineers);
-		yritaAloitaPalvelu();
-	}
-
-
-//	public void aloitaPalvelu(){ //Aloitetaan uusi palvelu, asiakas on jonossa palvelun aikana
-//		if (jono.isEmpty()) return;
-//
-//		Trace.out(Trace.Level.INFO, "Aloitetaan uusi palvelu asiakkaalle " + jono.peek().getId());
-//
-//		varattu = true;
-//		lastStartTime = Kello.getInstance().getAika();
-//		double palveluaika = generator.sample();
-//		tapahtumalista.lisaa(new Tapahtuma(skeduloitavanTapahtumanTyyppi,Kello.getInstance().getAika()+palveluaika));
-//	}
-
-
 
 	public boolean onVarattu(){
 		return varattu;

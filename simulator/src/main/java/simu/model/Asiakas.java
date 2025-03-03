@@ -56,7 +56,6 @@ public class Asiakas {
 		return this.isNoPartsNeeded;
 	}
 
-
 	public int getId() {
 		return id;
 	}
@@ -72,19 +71,16 @@ public class Asiakas {
 	}
 
 public double calculateServiceCost() {
-    double baseCost = 100.0; // Базовая стоимость
+    double baseCost = 100.0;
 
-    // Если машина электрическая, стоимость выше
     if (isElectricCar()) {
         baseCost += 50.0;
     }
 
-    // Если были заказаны запчасти, добавляем стоимость
     if (!isNoPartsNeeded()) {
         baseCost += 200.0;
     }
 
-    // Время пребывания также влияет на стоимость
     double timeSpent = getPoistumisaika() - getSaapumisaika();
     baseCost += timeSpent * 2.0;
 
