@@ -4,7 +4,7 @@ import simu.model.OmaMoottori;
 
 public class Kontrolleri implements IKontrolleriForV {
 
-    private OmaMoottori moottori;
+    private final OmaMoottori moottori;
     private double simulointiAika;
     private long viive;
 
