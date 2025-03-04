@@ -1,9 +1,11 @@
 package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
+import entity.SimulationResult;
 import simu.framework.*;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
+import dao.SimulationResultDao;
 
 import java.util.*;
 
@@ -233,6 +235,9 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Served regular cars: " + servedRegularCars);
 		System.out.println("Served electric cars: " + servedElectricCars);
 		System.out.println("Rejected customers: " + rejectedCustomers);
+		SimulationResultDao dao = new SimulationResultDao();
+		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
+
 	}
 
 	public double calculateTotalEarnings() {
