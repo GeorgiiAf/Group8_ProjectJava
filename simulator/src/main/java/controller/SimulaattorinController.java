@@ -8,6 +8,7 @@ import java.awt.Point;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -24,7 +25,9 @@ import simu.model.Palvelupiste;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
 THAT SHOULD BE THE MAIN CONTROLLER
@@ -50,12 +53,21 @@ public class SimulaattorinController {
     private Thread simulationThread;
     private AnimationTimer animationTimer;
 
+    // Maps for service point and customer configurations
+    private final Map<String, Integer> servicePointsMap = new LinkedHashMap<>();
+    private final Map<String, Double> customerTypesMap = new LinkedHashMap<>();
+    private final Map<String, Integer> maxSPoints = new LinkedHashMap<>();
+
+//    private AnimationTimer animationTimer;
+    private Map<String, Point2D> servicePointPositions = new LinkedHashMap<>();
+
     @FXML private TextField aika;
     @FXML private TextField viive;
     @FXML private Label tulos;
     @FXML private Button startButton;
     @FXML private Button stopButton;
     @FXML private Button pauseButton;
+    @FXML private Canvas carRepairCanvas; // Canvas for drawing service points
 
     @FXML private TextField regularCarSpots;
     @FXML private TextField electricCarSpots;
@@ -105,6 +117,9 @@ public class SimulaattorinController {
             drawServicePoints();
         }
 
+        maxSPoints.put("CarArrives", 40);
+        maxSPoints.put("DiagnosticsDone", 20);
+
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -112,6 +127,7 @@ public class SimulaattorinController {
                 updateVisualisation();
             }
         };
+        drawAllServicePoints();
     }
 
     public void setKontrolleri(IKontrolleriForV kontrolleri) {
@@ -361,6 +377,8 @@ public class SimulaattorinController {
             return;
         }
 
+
+
         gc.clearRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
 
         drawServicePoints();
@@ -425,5 +443,72 @@ public class SimulaattorinController {
         }
     }
 
+    private void drawTypeLabel(GraphicsContext gc, String pointType, double y) {
+        double xLeftEdge = 5;
+        gc.setFill(Color.BLACK);
+        gc.fillText(pointType, xLeftEdge, y-15);
+    }
+
+
+    public void drawAllServicePoints() {
+        GraphicsContext gc = carRepairCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, carRepairCanvas.getWidth(), carRepairCanvas.getHeight());
+
+        double yStep = 75;
+        int typeIndex = 0;
+
+        for (Map.Entry<String, Integer> entry : maxSPoints.entrySet()) {
+            String pointType = entry.getKey();
+//            int totalPoints = entry.getValue();
+//            int activatedPoints = servicePointsMap.getOrDefault(pointType, 0);
+            int totalPoints = 30;
+            int activatedPoints = 10;
+            double y = yStep * (typeIndex + 1);
+
+            if (pointType.equals("CarArrives") && typeIndex > 0) {
+                System.out.println("Drawing");
+                y += 2;
+            } else if (pointType.equals("DiagnosticsDone") && typeIndex > 0) {
+                y += 85;
+            } else if (typeIndex > 0) {
+                y += yStep;
+            }
+
+            drawServicePoints(gc, pointType, activatedPoints, totalPoints, y);
+            drawTypeLabel(gc, pointType, y - 15);
+
+            typeIndex++;
+        }
+    }
+
+    public void drawServicePoints(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
+        double rectWidth = 15.0;
+        double rectHeight = 10.0;
+        double spacingX = 28.0;
+        double spacingY = 30.0;
+        int pointsPerRow = 20;
+
+        int currentRow = 0;
+        for (int i = 0; i < totalPoints; i++) {
+            int rowPosition = i % pointsPerRow;
+            if (i > 0 && rowPosition == 0) {
+                currentRow++;
+            }
+
+            double x = spacingX * (rowPosition + 1);
+            double yOffset = yStart + spacingY * currentRow;
+
+            if (i < activatedCount) {
+                gc.setFill(Color.web("#A0B8F7"));
+            } else {
+                gc.setFill(Color.GREY);
+            }
+
+            gc.fillRect(x - rectWidth / 2, yOffset - rectHeight / 2, rectWidth, rectHeight);
+
+            String key = pointType + "#" + i;
+            servicePointPositions.put(key, new Point2D(x, yOffset));
+        }
+    }
 
 }
