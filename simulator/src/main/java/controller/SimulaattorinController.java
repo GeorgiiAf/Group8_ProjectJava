@@ -5,6 +5,7 @@ package controller;
 import java.awt.Point;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +17,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
@@ -24,6 +27,8 @@ import simu.model.Palvelupiste;
 
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,10 +45,8 @@ public class SimulaattorinController {
     public Label earnedMoneyLabel;
     public Label servedRegularCarsLabel;
     public Label servedElectricCarsLabel;
-    public TextArea logTextArea;
     public Button slowDownButton;
     public Button speedUpButton;
-    public ListView logListView;
     public Slider partsWaitingTimeSlider;
     public Button setMechanicsButton;
     public TextField mechanicsCountField;
@@ -52,6 +55,7 @@ public class SimulaattorinController {
     private boolean simulationRunning = false;
     private Thread simulationThread;
     private AnimationTimer animationTimer;
+    private boolean paused = false;
 
     // Maps for service point and customer configurations
     private final Map<String, Integer> servicePointsMap = new LinkedHashMap<>();
@@ -69,7 +73,7 @@ public class SimulaattorinController {
     @FXML private Button pauseButton;
     @FXML private Canvas carRepairCanvas; // Canvas for drawing service points
 
-    @FXML private TextField regularCarSpots;
+    @FXML private TextField arrivalSpots;
     @FXML private TextField electricCarSpots;
     @FXML private TextField customerCount;
 
@@ -81,6 +85,7 @@ public class SimulaattorinController {
     @FXML private Button showResultsButton;
     @FXML private Button helpButton;
     @FXML private Canvas workshopCanvas;
+    @FXML private ListView<TextFlow> logTextArea;
 
     private GraphicsContext gc;
 
@@ -207,7 +212,7 @@ public class SimulaattorinController {
                 moottori.setSimulointiaika(simulationTime);
                 moottori.setViive(delay);
                 moottori.setValues(
-                        Integer.parseInt(regularCarSpots.getText()),
+                        Integer.parseInt(arrivalSpots.getText()),
                         Integer.parseInt(electricCarSpots.getText()),
                         Integer.parseInt(customerCount.getText()),
                         Integer.parseInt(regularCarServiceCost.getText()),
@@ -232,6 +237,8 @@ public class SimulaattorinController {
 
         if (startButton != null) startButton.setDisable(true);
         if (stopButton != null) stopButton.setDisable(false);
+
+        pauseButton.setOnAction(event -> pause(moottori));
 
         animationTimer.start();
         simulationThread.start();
@@ -475,8 +482,7 @@ public class SimulaattorinController {
     }
 
     public void drawServicePoints(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
-        double rectWidth = 15.0;
-        double rectHeight = 10.0;
+        double circleDiameter = 15.0; // Diameter of the circle
         double spacingX = 28.0;
         double spacingY = 30.0;
         int pointsPerRow = 20;
@@ -497,11 +503,44 @@ public class SimulaattorinController {
                 gc.setFill(Color.GREY);
             }
 
-            gc.fillRect(x - rectWidth / 2, yOffset - rectHeight / 2, rectWidth, rectHeight);
+            gc.fillOval(x - circleDiameter / 2, yOffset - circleDiameter / 2, circleDiameter, circleDiameter);
 
             String key = pointType + "#" + i;
             servicePointPositions.put(key, new Point2D(x, yOffset));
         }
+    }
+
+    private void pause(OmaMoottori m) {
+        paused = !paused;
+        m.setPause();
+        Trace.out(Trace.Level.INFO, "PAUSE PRESSED");
+        if (paused) {
+            logging("Simulation paused");
+        } else {
+            logging("Simulation resumed");
+        }
+    }
+
+    public void logging(String s) {
+        Platform.runLater(() -> {
+            LocalTime currentTime = LocalTime.now();
+            String timeString = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+            Text timeText = new Text(timeString + "  ");
+            timeText.setStyle("-fx-font-weight: bold;");
+
+            Text messageText = new Text(s);
+
+            TextFlow textFlow = new TextFlow(timeText, messageText);
+
+            logTextArea.getItems().add(textFlow);
+
+            if (logTextArea.getItems().size() > 100) {
+                logTextArea.getItems().remove(0);
+            }
+
+            logTextArea.scrollTo(logTextArea.getItems().size() - 1);
+        });
     }
 
     // later add this button

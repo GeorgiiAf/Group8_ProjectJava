@@ -15,8 +15,8 @@
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="100" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="41.8" minHeight="30.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                    <RowConstraints maxHeight="29.800000000000004" minHeight="21.4" prefHeight="21.4" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
@@ -25,13 +25,13 @@
                 </rowConstraints>
                 <!-- Regular Car Spots -->
                 <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label styleClass="label" text="Regular Car Spots 🚙" />
-                    <TextField fx:id="regularCarSpots" promptText="Enter number" styleClass="text-field" />
+                    <Label styleClass="label" text="Arrival Spots 🚙" />
+                    <TextField fx:id="arrivalSpots" promptText="Enter number" styleClass="text-field" />
                 </VBox>
 
                 <!-- Electric Car Spots -->
                 <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label styleClass="label" text="Electric Car Spots 🚗⚡" />
+                    <Label styleClass="label" text="Diagnostics Spots 🚗⚡" />
                     <TextField fx:id="electricCarSpots" promptText="Enter number" styleClass="text-field" />
                 </VBox>
 
@@ -125,7 +125,7 @@
     <bottom>
         <!-- Bottom Panel with Logs -->
         <VBox>
-            <TextArea fx:id="logTextArea" prefHeight="151.0" prefWidth="1210.0" promptText="Simulation logs..." styleClass="text-field" />
+         <ListView fx:id="logTextArea" prefHeight="108.0" prefWidth="1210.0" />
             <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="770.0">
                 <Label fx:id="inputErrorLabel" textFill="RED" />
                 <Pane prefHeight="38.0" prefWidth="233.0" HBox.hgrow="ALWAYS" />

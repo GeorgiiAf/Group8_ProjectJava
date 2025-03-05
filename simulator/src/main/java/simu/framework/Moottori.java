@@ -8,6 +8,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 
 		protected Tapahtumalista tapahtumalista;
 		private long viive = 0;
+		private boolean paused = false;
 
 
 
@@ -35,6 +36,15 @@ package simu.framework;			// I DKN  REWORK/DELETE
 		return viive;
 	}
 
+	public void setPause() {
+		paused = !paused;
+		if (!paused) {
+			synchronized (this) {
+				notify();
+			}
+		}
+	}
+
 
 	public void aja(){
 		alustukset(); // luodaan mm. ensimmäinen tapahtuma
@@ -51,6 +61,9 @@ package simu.framework;			// I DKN  REWORK/DELETE
 
 			synchronized (this) {
 				try {
+					if(paused){
+						wait();
+					}
 					Thread.sleep((100));
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();

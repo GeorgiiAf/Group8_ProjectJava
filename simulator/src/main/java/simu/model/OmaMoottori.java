@@ -27,7 +27,7 @@ public class OmaMoottori extends Moottori{
 	private int servedElectricCars = 0;
 	private int rejectedCustomers = 0;
 
-	private int regularCarSpots = 0;
+	private int arrivalSpots = 0;
 	private int electricCarSpots = 0;
 	private int customerCount = 0;
 	private int regularCarServiceCost = 0;
@@ -45,8 +45,8 @@ public class OmaMoottori extends Moottori{
 
 	}
 
-	public void setValues(int regularCarSpots, int electricCarSpots, int customerCount, int regularCarServiceCost, int electricCarServiceCost, int partsCost){
-		this.regularCarSpots = regularCarSpots;
+	public void setValues(int arrivalSpots, int electricCarSpots, int customerCount, int regularCarServiceCost, int electricCarServiceCost, int partsCost){
+		this.arrivalSpots = arrivalSpots;
 		this.electricCarSpots = electricCarSpots;
 		this.electricCarServiceCost = electricCarServiceCost;
 		this.partsCost = partsCost;
@@ -81,7 +81,7 @@ public class OmaMoottori extends Moottori{
 		this.carReady.clear();
 		this.simpleMaintenance.clear();
 
-		this.arrival.addAll(createPalvelupiste(15, 10, new Normal(10, 2), TapahtumanTyyppi.CAR_ARRIVES));
+		this.arrival.addAll(createPalvelupiste(arrivalSpots, 10, new Normal(10, 2), TapahtumanTyyppi.CAR_ARRIVES));
 		this.diagnostics.addAll(createPalvelupiste(10, 5, new Normal(30, 10), TapahtumanTyyppi.DIAGNOSTIC_DONE));
 		this.parts.addAll(createPalvelupiste(4, 5, new Normal(60, 30), TapahtumanTyyppi.PARTS_ORDERED));
 		this.simpleMaintenance.addAll(createPalvelupiste(10, 10, new Normal(30, 15), TapahtumanTyyppi.SIMPLE_MAINTENANCE));
