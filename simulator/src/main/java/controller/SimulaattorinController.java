@@ -2,10 +2,10 @@ package controller;
 
 //  REWORK  THIS
 
-
 import java.awt.Point;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -31,8 +31,6 @@ import java.util.Map;
 
 /*
 THAT SHOULD BE THE MAIN CONTROLLER
-
-
 REWORK
 */
 
@@ -47,6 +45,8 @@ public class SimulaattorinController {
     public Button speedUpButton;
     public ListView logListView;
     public Slider partsWaitingTimeSlider;
+    public Button setMechanicsButton;
+    public TextField mechanicsCountField;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;
@@ -76,7 +76,6 @@ public class SimulaattorinController {
     @FXML private TextField regularCarServiceCost;
     @FXML private TextField electricCarServiceCost;
     @FXML private TextField partsCost;
-
 
     @FXML private Canvas naytto;
     @FXML private Button showResultsButton;
@@ -123,7 +122,6 @@ public class SimulaattorinController {
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                System.out.println("Updating visualization...");
                 updateVisualisation();
             }
         };
@@ -239,9 +237,6 @@ public class SimulaattorinController {
         simulationThread.start();
     }
 
-    public void setMoottori(OmaMoottori moottori) {
-        this.moottori = moottori;
-    }
 
     @FXML
     private void handleStopButton() {
@@ -252,7 +247,7 @@ public class SimulaattorinController {
         moottori.setSimulointiLoppu(true);
 
         try {
-            simulationThread.join(1000); // Даем потоку 1 секунду на завершение
+            simulationThread.join(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -376,8 +371,6 @@ public class SimulaattorinController {
         if (gc == null || moottori == null) {
             return;
         }
-
-
 
         gc.clearRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
 
@@ -511,4 +504,8 @@ public class SimulaattorinController {
         }
     }
 
+    // later add this button
+    public void handleSetMechanics(ActionEvent actionEvent) {
+        return;
+    }
 }

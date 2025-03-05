@@ -5,27 +5,14 @@ import controller.SimulaattorinController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
 
-import java.text.DecimalFormat;
-
 public class SimulaattorinGUI extends Application {
 
     private Kontrolleri kontrolleri;
-
-    private TextField aika;
-    private TextField viive;
-    private Label tulos;
-    private Button kaynnistaButton;
-    private Button hidastaButton;
-    private Button nopeutaButton;
-
     @Override
     public void init() {
         Trace.setTraceLevel(Level.INFO);
@@ -51,22 +38,6 @@ public class SimulaattorinGUI extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    public double getAika() {
-        return Double.parseDouble(aika.getText());
-    }
-
-
-    public long getViive() {
-        return Long.parseLong(viive.getText());
-    }
-
-
-    public void setLoppuaika(double aika) {
-        DecimalFormat formatter = new DecimalFormat("#0.00");
-        this.tulos.setText(formatter.format(aika));
     }
 
 }
