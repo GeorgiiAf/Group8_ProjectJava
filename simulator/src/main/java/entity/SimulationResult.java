@@ -37,7 +37,6 @@ public class SimulationResult {
         this.simulationTime = LocalDateTime.now();
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

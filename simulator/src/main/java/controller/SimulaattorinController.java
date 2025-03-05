@@ -179,7 +179,7 @@ public class SimulaattorinController {
     private void handleStartButton() {
         double simulationTime = getAika();
         long delay = getViive();
-        System.out.println("Start button clicked"); // Отладочный вывод
+        System.out.println("Start button clicked");
 
 
         if (simulationTime <= 0 || delay < 0) {

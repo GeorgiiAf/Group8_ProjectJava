@@ -6,7 +6,10 @@ import jakarta.persistence.*;
  * A singleton class that provides a connection to a MariaDB database using JPA.
  */
 
-//  CREATE DATABASE simulation_results_db;
+/*   CREATE DATABASE simulation_results_db;
+GRANT ALL PRIVILEGES ON simulation_results_db.* TO 'appuser'@'localhost';
+FLUSH PRIVILEGES;
+ */
 
 public class MariaDbJpaConnection {
 
