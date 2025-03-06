@@ -45,6 +45,8 @@ public class SimulaattorinController {
     public Button slowDownButton;
     public Button speedUpButton;
     public Slider partsWaitingTimeSlider;
+    public Slider arrivalTimeSlider5;
+    public Slider arrivalTimeSlider6;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;
@@ -68,9 +70,11 @@ public class SimulaattorinController {
     @FXML private Button pauseButton;
     @FXML private Canvas carRepairCanvas; // Canvas for drawing service points
 
-    @FXML private TextField arrivalSpots;
-    @FXML private TextField electricCarSpots;
-    @FXML private TextField customerCount;
+    @FXML private Spinner<Integer> arrivalSpots;
+    @FXML private Spinner<Integer> diagnosticsSpots;
+    @FXML private Spinner<Integer> partsSpots;
+    @FXML private Spinner<Integer> maintenanceSpots;
+    @FXML private Spinner<Integer> carReadySpots;
 
     @FXML private TextField regularCarServiceCost;
     @FXML private TextField electricCarServiceCost;
@@ -81,6 +85,12 @@ public class SimulaattorinController {
     @FXML private Button helpButton;
     @FXML private Canvas workshopCanvas;
     @FXML private ListView<TextFlow> logTextArea;
+
+    @FXML private Slider arrivalTimeSlider;
+    @FXML private Slider diagnosticsTimeSlider;
+    @FXML private Slider partsTimeSlider;
+    @FXML private Slider maintenanceTimeSlider;
+    @FXML private Slider carReadyTimeSlider;
 
     private GraphicsContext gc;
 
@@ -206,17 +216,31 @@ public class SimulaattorinController {
         Trace.setTraceLevel(Level.INFO);
 
         simulationThread = new Thread(() -> {
+
+            int arrivalTime = (int) arrivalTimeSlider.getValue();
+            int diagnosticsTime = (int) diagnosticsTimeSlider.getValue();
+            int partsTime = (int) partsTimeSlider.getValue();
+            int maintenanceTime = (int) maintenanceTimeSlider.getValue();
+            int carReadyTime = (int) carReadyTimeSlider.getValue();
+
+            moottori.setAllServiceTime(
+                    arrivalTime,
+                    diagnosticsTime,
+                    partsTime,
+                    maintenanceTime,
+                    carReadyTime
+            );
+
             try {
                 simulationRunning = true;
                 moottori.setSimulointiaika(simulationTime);
                 moottori.setViive(delay);
-                moottori.setValues(
-                        Integer.parseInt(arrivalSpots.getText()),
-                        Integer.parseInt(electricCarSpots.getText()),
-                        Integer.parseInt(customerCount.getText()),
-                        Integer.parseInt(regularCarServiceCost.getText()),
-                        Integer.parseInt(electricCarServiceCost.getText()),
-                        Integer.parseInt(partsCost.getText())
+                moottori.setSpotValues(
+                        Integer.parseInt(String.valueOf(arrivalSpots)),
+                        Integer.parseInt(String.valueOf(diagnosticsSpots.getValue())),
+                        Integer.parseInt(String.valueOf(partsSpots.getValue())),
+                        Integer.parseInt(String.valueOf(maintenanceSpots.getValue())),
+                        Integer.parseInt(String.valueOf(carReadySpots.getValue()))
                 );
                 moottori.aja();
             } catch (Exception e) {
