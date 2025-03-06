@@ -3,7 +3,6 @@ package controller;
 //  REWORK  THIS
 
 import java.awt.Point;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -24,8 +23,6 @@ import simu.framework.Trace;
 import simu.framework.Trace.Level;
 import simu.model.OmaMoottori;
 import simu.model.Palvelupiste;
-
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -48,8 +45,6 @@ public class SimulaattorinController {
     public Button slowDownButton;
     public Button speedUpButton;
     public Slider partsWaitingTimeSlider;
-    public Button setMechanicsButton;
-    public TextField mechanicsCountField;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;
@@ -89,6 +84,10 @@ public class SimulaattorinController {
 
     private GraphicsContext gc;
 
+    public SimulaattorinController(Canvas workshopCanvas) {
+        this.workshopCanvas = workshopCanvas;
+    }
+
     @FXML
     private void initialize() {
         if (showResultsButton != null) {
@@ -118,11 +117,16 @@ public class SimulaattorinController {
             gc = workshopCanvas.getGraphicsContext2D();
             gc.setFill(Color.LIGHTGRAY);
             gc.fillRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
-            drawServicePoints();
+            drawServicePointsOnWorkshopCanvas();
         }
 
-        maxSPoints.put("CarArrives", 40);
-        maxSPoints.put("DiagnosticsDone", 20);
+        //   maxSPoints.put("CarArrives", 10);
+        //   maxSPoints.put("Diagnostics", 10);
+        //  maxSPoints.put("Parts", 10);
+        //  maxSPoints.put("CarReady", 10);
+        // maxSPoints.put("PartsOrdered", 15);
+        // maxSPoints.put("SimpleMaintenance", 30);
+        // maxSPoints.put("CarReady", 25);
 
         animationTimer = new AnimationTimer() {
             @Override
@@ -130,7 +134,6 @@ public class SimulaattorinController {
                 updateVisualisation();
             }
         };
-        drawAllServicePoints();
     }
 
     public void setKontrolleri(IKontrolleriForV kontrolleri) {
@@ -159,11 +162,7 @@ public class SimulaattorinController {
         tulos.setText(String.format("%.2f", aika));
     }
 
-    public void tyhjennaVisualisointi() {
-        if (naytto != null) {
-            naytto.getGraphicsContext2D().clearRect(0, 0, naytto.getWidth(), naytto.getHeight());
-        }
-    }
+
 
     public void uusiAsiakas() {
         updateVisualisation();
@@ -323,54 +322,45 @@ public class SimulaattorinController {
         if (moottori == null || kontrolleri == null) {
             return;
         }
-
         kontrolleri.setTotalEarnings(moottori.calculateTotalEarnings());
         kontrolleri.setServedRegularCars(moottori.getServedRegularCars());
         kontrolleri.setServedElectricCars(moottori.getServedElectricCars());
         kontrolleri.setRejectedCustomers(moottori.getRejectedCustomers());
     }
 
-    public void drawServicePoints() {
+    public void drawServicePointsOnWorkshopCanvas() {
         if (gc != null) {
             gc.clearRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
             gc.setFill(Color.LIGHTGRAY);
             gc.fillRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
 
-            gc.setFill(Color.BLUE);
-            gc.setStroke(Color.BLACK);
-            gc.setLineWidth(2);
+            double startX = 50;
+            double startY = 100;
+            double columnWidth = 100;
+            double columnHeight = 200;
+            double circleDiameter = 20;
+            double spacing = 10;
 
-            double x = 50;
-            double y = 50;
-            double width = 100;
-            double height = 50;
+            for (Map.Entry<String, Integer> entry : servicePointsMap.entrySet()) {
+                String pointType = entry.getKey();
+                int queueSize = entry.getValue();
 
-            gc.setFill(Color.LIGHTSKYBLUE);
-            gc.fillRect(x, y, width, height);
-            gc.strokeRect(x, y, width, height);
-            gc.setFill(Color.BLACK);
-            gc.fillText("Arrival", x + 30, y + 30);
+                gc.setStroke(Color.BLACK);
+                gc.strokeRect(startX, startY, columnWidth, columnHeight);
 
-            y += 100;
-            gc.setFill(Color.LIGHTGREEN);
-            gc.fillRect(x, y, width, height);
-            gc.strokeRect(x, y, width, height);
-            gc.setFill(Color.BLACK);
-            gc.fillText("Diagnostics", x + 20, y + 30);
+                double circleY = startY + spacing;
+                for (int i = 0; i < queueSize; i++) {
+                    double circleX = startX + (columnWidth - circleDiameter) / 2;
+                    gc.setFill(Color.BLUE);
+                    gc.fillOval(circleX, circleY, circleDiameter, circleDiameter);
+                    circleY += circleDiameter + spacing;
+                }
 
-            y += 100;
-            gc.setFill(Color.LIGHTYELLOW);
-            gc.fillRect(x, y, width, height);
-            gc.strokeRect(x, y, width, height);
-            gc.setFill(Color.BLACK);
-            gc.fillText("Parts", x + 30, y + 30);
+                gc.setFill(Color.BLACK);
+                gc.fillText(pointType, startX + 10, startY + columnHeight + 20);
 
-            y += 100;
-            gc.setFill(Color.LIGHTCORAL);
-            gc.fillRect(x, y, width, height);
-            gc.strokeRect(x, y, width, height);
-            gc.setFill(Color.BLACK);
-            gc.fillText("Car Ready", x + 20, y + 30);
+                startX += columnWidth + 50;
+            }
         }
     }
 
@@ -378,27 +368,21 @@ public class SimulaattorinController {
         if (gc == null || moottori == null) {
             return;
         }
-
         gc.clearRect(0, 0, workshopCanvas.getWidth(), workshopCanvas.getHeight());
-
-        drawServicePoints();
 
         ArrayList<ArrayList<Palvelupiste>> allServicePoints = moottori.getAllServicePointsList();
         if (allServicePoints == null || allServicePoints.isEmpty()) {
             return;
         }
-        int[] queueSizes = new int[allServicePoints.size()];
-        for (int i = 0; i < allServicePoints.size(); i++) {
-            queueSizes[i] = allServicePoints.get(i).size();
-        }
-        drawQueues(queueSizes);
 
-        List<Point> customerPositions = new ArrayList<>();
-        for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
-            for (Palvelupiste servicePoint : servicePoints) {
-                customerPositions.add(new Point(100, 100));            }
+        servicePointsMap.clear();
+        for (int i = 0; i < allServicePoints.size(); i++) {
+            String pointType = "ServicePoint" + (i + 1);
+            int queueSize = allServicePoints.get(i).size();
+            servicePointsMap.put(pointType, queueSize);
         }
-        drawCustomers(customerPositions);
+
+        drawServicePointsOnWorkshopCanvas();
     }
 
     public void drawQueues(int[] queueSizes) {
@@ -450,7 +434,7 @@ public class SimulaattorinController {
     }
 
 
-    public void drawAllServicePoints() {
+    public void drawAllServicePointsOnCarRepairCanvas() {
         GraphicsContext gc = carRepairCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, carRepairCanvas.getWidth(), carRepairCanvas.getHeight());
 
@@ -459,8 +443,6 @@ public class SimulaattorinController {
 
         for (Map.Entry<String, Integer> entry : maxSPoints.entrySet()) {
             String pointType = entry.getKey();
-//            int totalPoints = entry.getValue();
-//            int activatedPoints = servicePointsMap.getOrDefault(pointType, 0);
             int totalPoints = 30;
             int activatedPoints = 10;
             double y = yStep * (typeIndex + 1);
@@ -474,14 +456,14 @@ public class SimulaattorinController {
                 y += yStep;
             }
 
-            drawServicePoints(gc, pointType, activatedPoints, totalPoints, y);
+            drawServicePointsOnCarRepairCanvas(gc, pointType, activatedPoints, totalPoints, y);
             drawTypeLabel(gc, pointType, y - 15);
 
             typeIndex++;
         }
     }
 
-    public void drawServicePoints(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
+    public void drawServicePointsOnCarRepairCanvas(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
         double circleDiameter = 15.0; // Diameter of the circle
         double spacingX = 28.0;
         double spacingY = 30.0;
@@ -536,7 +518,7 @@ public class SimulaattorinController {
             logTextArea.getItems().add(textFlow);
 
             if (logTextArea.getItems().size() > 100) {
-                logTextArea.getItems().remove(0);
+                logTextArea.getItems().removeFirst();
             }
 
             logTextArea.scrollTo(logTextArea.getItems().size() - 1);
@@ -545,6 +527,9 @@ public class SimulaattorinController {
 
     // later add this button
     public void handleSetMechanics(ActionEvent actionEvent) {
-        return;
+    }
+
+    public void drawAllServicePoints() {
+        drawAllServicePointsOnCarRepairCanvas();
     }
 }
