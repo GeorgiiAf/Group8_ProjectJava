@@ -5,8 +5,6 @@ import simu.model.OmaMoottori;
 public class Kontrolleri implements IKontrolleriForV {
 
     private final OmaMoottori moottori;
-    private double simulointiAika;
-    private long viive;
 
     private double totalEarnings;
     private int servedRegularCars;
@@ -17,43 +15,11 @@ public class Kontrolleri implements IKontrolleriForV {
         moottori = new OmaMoottori();
     }
 
-    @Override
-    public void kaynnistaSimulointi() {
-        moottori.setSimulointiAika(simulointiAika);
-        moottori.setViive(viive);
-
-        Thread simulointiThread = new Thread(() -> {
-            moottori.aja();
-            updateResults();
-        });
-
-        simulointiThread.start();
-    }
-
     private void updateResults() {
-
         this.totalEarnings = moottori.calculateTotalEarnings();
         this.servedRegularCars = moottori.getServedRegularCars();
         this.servedElectricCars = moottori.getServedElectricCars();
         this.rejectedCustomers = moottori.getRejectedCustomers();
-    }
-
-    @Override
-    public void nopeuta() {
-        moottori.setViive((long)(moottori.getViive() * 0.5));
-    }
-
-    @Override
-    public void hidasta() {
-        moottori.setViive((long)(moottori.getViive() * 1.5));
-    }
-
-    public void setSimulointiAika(double aika) {
-        this.simulointiAika = aika;
-    }
-
-    public void setViive(long viive) {
-        this.viive = viive;
     }
 
     @Override
