@@ -15,4 +15,7 @@ public interface IKontrolleriForV {
     void setServedElectricCars(int count);
     void setRejectedCustomers(int count);
 
+    void kaynnistaSimulointi();
+    void nopeuta();
+    void hidasta();
 }
