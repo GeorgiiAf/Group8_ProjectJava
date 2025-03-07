@@ -77,46 +77,40 @@
                     <TextField fx:id="partsCost" promptText="Enter price" styleClass="text-field" />
                 </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
-               <children>
                   <Label text="Service Time" />
                   <Slider fx:id="arrivalTimeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="15.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" />
-               </children>
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <children>
                   <Label text="Service Time" />
                   <Slider fx:id="diagnosticsTimeSlider" blockIncrement="5.0" majorTickUnit="15.0" max="60.0" min="1.0" minorTickCount="5" prefHeight="38.0" prefWidth="118.0" showTickLabels="true" showTickMarks="true" value="30.0" />
-               </children>
             </VBox>
             <VBox prefHeight="48.0" prefWidth="104.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <children>
+
                   <Label text="Service Time" />
                   <Slider fx:id="partsTimeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="120.0" min="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="50.0" />
-               </children>
+
             </VBox>
             <VBox prefHeight="38.0" prefWidth="106.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <children>
+
                   <Label text="Service Time" />
                   <Slider fx:id="maintenanceTimeSlider" blockIncrement="1.0" majorTickUnit="15.0" max="60.0" min="10.0" minorTickCount="5" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="20.0" />
-               </children>
+
             </VBox>
             <VBox prefHeight="50.0" prefWidth="108.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-               <children>
+
                   <Label text="Service Time" />
                   <Slider fx:id="carReadyTimeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="15.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" />
-               </children>
+
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-               <children>
                   <Label text="Service Time" />
                   <Slider fx:id="arrivalTimeSlider5" blockIncrement="1.0" majorTickUnit="5.0" max="15.0" min="1.0" prefHeight="0.0" prefWidth="108.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" />
-               </children>
             </VBox>
             <VBox prefHeight="6.0" prefWidth="108.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-               <children>
+
                   <Label text="Service Time" />
                   <Slider fx:id="arrivalTimeSlider6" blockIncrement="1.0" majorTickUnit="5.0" max="15.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" />
-               </children>
+
             </VBox>
             </GridPane>
 
@@ -157,9 +151,13 @@
         <VBox prefHeight="200.0" prefWidth="200.0" spacing="5.0" styleClass="vbox">
             <Label styleClass="blue-background-label" text="SIMULATION STATUS" />
             <VBox spacing="5">
+
+                <Label styleClass="status-label" text="Total simulation time : " />
+                <Label fx:id="tulos" styleClass="label" text="0" />
+
                 <!-- Rejected Customers -->
                 <Label styleClass="status-label" text="Rejected Customers: 😠" />
-                <Label fx:id="tulos" styleClass="label" text="0" />
+                <Label fx:id="rejectedCustomers" styleClass="label" text="0" />
 
                 <!-- Earned Money -->
                 <Label styleClass="status-label" text="Earned Money: 💵" />

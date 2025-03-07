@@ -52,6 +52,7 @@ public class SimulaattorinController {
     public TextField mechanicsCountField;
     public Slider arrivalTimeSlider5;
     public Slider arrivalTimeSlider6;
+    public Label rejectedCustomers;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;

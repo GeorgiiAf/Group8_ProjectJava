@@ -1,12 +1,12 @@
 .root {
     -fx-font-family: "Arial";
-    -fx-base: #fafafa;
+    -fx-base: #f4f4f4;
 }
 
 .title-label {
     -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
+    -fx-text-fill: #34495e;
 }
 
 .button {
@@ -15,22 +15,22 @@
     -fx-padding: 10px 20px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
-    -fx-border-color: DarkGray;
+    -fx-border-color: #7f8c8d;
 }
 
 .start-button {
-    -fx-background-color: #FFF187;
-    -fx-text-fill: black;
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
 }
 
 .pause-button {
-    -fx-background-color: lightGrey;
-    -fx-text-fill: black;
+    -fx-background-color: #f39c12;
+    -fx-text-fill: white;
 }
 
 .stop-button {
-    -fx-background-color: lightGrey;
-    -fx-text-fill: black;
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
 }
 
 .text-field {
@@ -53,6 +53,7 @@
 .canvas {
     -fx-border-color: #2c3e50;
     -fx-border-width: 2px;
+    -fx-background-color: #ecf0f1;
 }
 
 .list-view {
@@ -60,38 +61,34 @@
     -fx-border-color: #bdc3c7;
 }
 
-.emoji-button {
-    -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-    -fx-font-size: 18px;
-    -fx-padding: 5px;
-}
-
 .vbox, .hbox {
-    -fx-border-color: silver;
+    -fx-border-color: #7f8c8d;
     -fx-border-radius: 5px;
-    -fx-background-color: #fafafa;
+    -fx-background-color: #fafafa; /* Светлый фон */
 }
 
 .blue-background-label {
-    -fx-background-color: #A0B8F7;
+    -fx-background-color: #3498db;
     -fx-padding: 5px;
     -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
 }
 
 .control-button {
-    -fx-background-color: #A0B8F7;
+    -fx-background-color: #3498db;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 .control-button:hover {
-    -fx-background-color: #A0B8F7;
+    -fx-background-color: #2980b9;
 }
 
 .left-padding {
     -fx-padding: 0 0 0 20;
 }
-.canvas {
-    -fx-background-color: lightgray;
+
+emoji-button {
+    -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    -fx-font-size: 18px;
+    -fx-padding: 5px;
 }
