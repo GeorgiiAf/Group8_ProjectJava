@@ -50,6 +50,8 @@ public class SimulaattorinController {
     public Slider partsWaitingTimeSlider;
     public Button setMechanicsButton;
     public TextField mechanicsCountField;
+    public Slider arrivalTimeSlider5;
+    public Slider arrivalTimeSlider6;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
     private boolean simulationRunning = false;
@@ -73,9 +75,11 @@ public class SimulaattorinController {
     @FXML private Button pauseButton;
     @FXML private Canvas carRepairCanvas; // Canvas for drawing service points
 
-    @FXML private TextField arrivalSpots;
-    @FXML private TextField electricCarSpots;
-    @FXML private TextField customerCount;
+    @FXML private Spinner<Integer> arrivalSpots;
+    @FXML private Spinner<Integer> diagnosticsSpots;
+    @FXML private Spinner<Integer> partsSpots;
+    @FXML private Spinner<Integer> maintenanceSpots;
+    @FXML private Spinner<Integer> carReadySpots;
 
     @FXML private TextField regularCarServiceCost;
     @FXML private TextField electricCarServiceCost;
@@ -87,10 +91,43 @@ public class SimulaattorinController {
     @FXML private Canvas workshopCanvas;
     @FXML private ListView<TextFlow> logTextArea;
 
+    @FXML private Slider arrivalTimeSlider;
+    @FXML private Slider diagnosticsTimeSlider;
+    @FXML private Slider partsTimeSlider;
+    @FXML private Slider maintenanceTimeSlider;
+    @FXML private Slider carReadyTimeSlider;
+
     private GraphicsContext gc;
 
     @FXML
     private void initialize() {
+
+        SpinnerValueFactory<Integer> factoryArrivalSpots =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 20);
+        factoryArrivalSpots.setValue(8);
+
+        SpinnerValueFactory<Integer> factoryDiagnosticsSpots =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 20);
+        factoryDiagnosticsSpots.setValue(5);
+
+        SpinnerValueFactory<Integer> factoryPartsSpots =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 30);
+        factoryPartsSpots.setValue(10);
+
+        SpinnerValueFactory<Integer> factoryMaintenanceSpots =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 30);
+        factoryMaintenanceSpots.setValue(5);
+
+        SpinnerValueFactory<Integer> factoryCarReadySpots =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 30);
+        factoryCarReadySpots.setValue(10);
+
+        arrivalSpots.setValueFactory(factoryArrivalSpots);
+        diagnosticsSpots.setValueFactory(factoryDiagnosticsSpots);
+        partsSpots.setValueFactory(factoryPartsSpots);
+        maintenanceSpots.setValueFactory(factoryMaintenanceSpots);
+        carReadySpots.setValueFactory(factoryCarReadySpots);
+
         if (showResultsButton != null) {
             showResultsButton.setOnAction(_ -> handleShowResultsButton());
         }
@@ -123,6 +160,10 @@ public class SimulaattorinController {
 
         maxSPoints.put("CarArrives", 40);
         maxSPoints.put("DiagnosticsDone", 20);
+        servicePointsMap.put("CarArrives", arrivalSpots.getValue());
+        servicePointsMap.put("DiagnosticsDone", diagnosticsSpots.getValue());
+
+        initializeSpinners();
 
         animationTimer = new AnimationTimer() {
             @Override
@@ -207,17 +248,33 @@ public class SimulaattorinController {
         Trace.setTraceLevel(Level.INFO);
 
         simulationThread = new Thread(() -> {
+
+            int arrivalTime = (int) arrivalTimeSlider.getValue();
+            int diagnosticsTime = (int) diagnosticsTimeSlider.getValue();
+            int partsTime = (int) partsTimeSlider.getValue();
+            int maintenanceTime = (int) maintenanceTimeSlider.getValue();
+            int carReadyTime = (int) carReadyTimeSlider.getValue();
+
+            logging("Arrival time set to -> " + arrivalTime);
+
+            moottori.setAllServiceTime(
+                    arrivalTime,
+                    diagnosticsTime,
+                    partsTime,
+                    maintenanceTime,
+                    carReadyTime
+            );
+
             try {
                 simulationRunning = true;
                 moottori.setSimulointiaika(simulationTime);
                 moottori.setViive(delay);
-                moottori.setValues(
-                        Integer.parseInt(arrivalSpots.getText()),
-                        Integer.parseInt(electricCarSpots.getText()),
-                        Integer.parseInt(customerCount.getText()),
-                        Integer.parseInt(regularCarServiceCost.getText()),
-                        Integer.parseInt(electricCarServiceCost.getText()),
-                        Integer.parseInt(partsCost.getText())
+                moottori.setSpotValues(
+                        arrivalSpots.getValue(),
+                        diagnosticsSpots.getValue(),
+                        partsSpots.getValue(),
+                        maintenanceSpots.getValue(),
+                        carReadySpots.getValue()
                 );
                 moottori.aja();
             } catch (Exception e) {
@@ -459,10 +516,10 @@ public class SimulaattorinController {
 
         for (Map.Entry<String, Integer> entry : maxSPoints.entrySet()) {
             String pointType = entry.getKey();
-//            int totalPoints = entry.getValue();
-//            int activatedPoints = servicePointsMap.getOrDefault(pointType, 0);
-            int totalPoints = 30;
-            int activatedPoints = 10;
+            int totalPoints = entry.getValue();
+            int activatedPoints = servicePointsMap.getOrDefault(pointType, 0);
+//            int totalPoints = 30;
+//            int activatedPoints = 10;
             double y = yStep * (typeIndex + 1);
 
             if (pointType.equals("CarArrives") && typeIndex > 0) {
@@ -482,7 +539,7 @@ public class SimulaattorinController {
     }
 
     public void drawServicePoints(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
-        double circleDiameter = 15.0; // Diameter of the circle
+        double circleDiameter = 15.0;
         double spacingX = 28.0;
         double spacingY = 30.0;
         int pointsPerRow = 20;
@@ -498,7 +555,7 @@ public class SimulaattorinController {
             double yOffset = yStart + spacingY * currentRow;
 
             if (i < activatedCount) {
-                gc.setFill(Color.web("#A0B8F7"));
+                gc.setFill(Color.web("#26bd44"));
             } else {
                 gc.setFill(Color.GREY);
             }
@@ -540,6 +597,29 @@ public class SimulaattorinController {
             }
 
             logTextArea.scrollTo(logTextArea.getItems().size() - 1);
+        });
+    }
+
+    private void initializeSpinners() {
+        setupSpinner(arrivalSpots, "CarArrives");
+        setupSpinner(diagnosticsSpots, "DiagnosticsDone");
+    }
+
+    private void setupSpinner(Spinner<Integer> spinner, String pointType) {
+        int defaultValue = spinner.getValue();
+
+        int maxPoints = maxSPoints.getOrDefault(pointType, 0);
+
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxPoints, defaultValue);
+        spinner.setValueFactory(valueFactory);
+
+        servicePointsMap.put(pointType, defaultValue);
+
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            servicePointsMap.put(pointType, newValue);
+
+
+            drawAllServicePoints();
         });
     }
 
