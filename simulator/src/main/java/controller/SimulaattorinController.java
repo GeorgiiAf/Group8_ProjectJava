@@ -3,6 +3,7 @@ package controller;
 //  REWORK  THIS
 
 import java.awt.Point;
+import simu.model.SimulationListener;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -37,7 +38,7 @@ THAT SHOULD BE THE MAIN CONTROLLER
 REWORK
 */
 
-public class SimulaattorinController {
+public class SimulaattorinController implements SimulationListener {
 
     public Label inputErrorLabel;
     public Label earnedMoneyLabel;
@@ -69,6 +70,7 @@ public class SimulaattorinController {
     int carServiceCostDefault = 150;
     int electricCarServiceCostDefault = 300;
     int partsCostDefault = 75;
+
 
     @FXML private TextField aika;
     @FXML private Label speedLabel;
@@ -201,6 +203,17 @@ public class SimulaattorinController {
         this.kontrolleri = kontrolleri;
     }
 
+
+    @Override
+    public void onLogMessage(String message) {
+        logging(message);
+    }
+
+
+
+
+
+
     public double getAika() {
         try {
             return Double.parseDouble(aika.getText());
@@ -265,7 +278,11 @@ public class SimulaattorinController {
 
         if (moottori == null) {
             moottori = new OmaMoottori();
+            moottori.addSimulationListener(this);
+
         }
+        moottori.setSimulointiLoppu(false);
+
 
 
         Trace.setTraceLevel(Level.INFO);
@@ -338,6 +355,22 @@ public class SimulaattorinController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        if (moottori != null) {
+            String message = String.format(
+                    "[Simulation Stopped] Simulation stopped by user.\n" +
+                            "Total earnings: %.2f EUR\n" +
+                            "Served regular cars: %d\n" +
+                            "Served electric cars: %d\n" +
+                            "Rejected customers: %d",
+                    moottori.calculateTotalEarnings(),
+                    moottori.getServedRegularCars(),
+                    moottori.getServedElectricCars(),
+                    moottori.getRejectedCustomers()
+            );
+            logging(message);
+        }
+
 
         if (startButton != null) startButton.setDisable(false);
         if (stopButton != null) stopButton.setDisable(true);

@@ -11,6 +11,7 @@ public class OmaMoottori extends Moottori{
 	
 	private Saapumisprosessi saapumisprosessi;
 	private List<Asiakas> customers = new ArrayList<>();
+	private final List<SimulationListener> listeners = new ArrayList<>();
 
 	ArrayList<Palvelupiste> arrival = new ArrayList<>();
 	ArrayList<Palvelupiste> diagnostics = new ArrayList<>();
@@ -128,6 +129,21 @@ public class OmaMoottori extends Moottori{
 				handleCarReady(t);
 				break;
 		}
+
+		if (isSimulationFinished()) {
+			simulointiLoppu = true;
+
+			String message = String.format(
+					"[Simulation Finished] All customers processed.\n" +
+							"Total earnings: %.2f EUR\n" +
+							"Served regular cars: %d\n" +
+							"Served electric cars: %d\n" +
+							"Rejected customers: %d",
+					totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers
+			);
+			notifyListeners(message);
+		}
+
 	}
 
 	private void handleArrival(Tapahtuma t) {
@@ -144,26 +160,48 @@ public class OmaMoottori extends Moottori{
 		Palvelupiste q = shortestQueue(this.diagnostics);
 		q.lisaaJonoon(uusiAsiakas);
 		uusiAsiakas.setCurrentQueueIndex(this.diagnostics.indexOf(q));
+		String message = String.format(
+				"[Arrival] Customer %d (%s) arrived and added to diagnostics queue.",
+				uusiAsiakas.getId(),
+				uusiAsiakas.isElectricCar() ? "Electric Car" : "Regular Car"
+		);
+		notifyListeners(message);
 
 		saapumisprosessi.generoiSeuraava(uusiAsiakas);
 	}
 
 	private void handleDiagnostics(Tapahtuma t) {
 		Asiakas a = diagnostics.get(t.getAsiakas().getCurrentQueueIndex()).otaJonosta();
+		String message = String.format(
+				"[Diagnostics] Customer %d diagnostics complete. Needs parts: %s.",
+				a.getId(),
+				!a.isNoPartsNeeded()
+		);
+		notifyListeners(message);
 		Trace.out(Trace.Level.INFO, "Customer " + a.getId() + " diagnostics complete. Needs parts: " + !a.isNoPartsNeeded());
-
 		if (a.isNoPartsNeeded()) {
 
 			Palvelupiste q = shortestQueue(this.simpleMaintenance);
 			q.lisaaJonoon(a);
 			a.setCurrentQueueIndex(this.simpleMaintenance.indexOf(q));
 			Trace.out(Trace.Level.INFO, "Customer " + a.getId() + " moved to SIMPLE_MAINTENANCE queue.");
+			message = String.format(
+					"[Diagnostics] Customer %d moved to SIMPLE_MAINTENANCE queue.",
+					a.getId()
+			);
+			notifyListeners(message);
 		} else {
 
 			Palvelupiste q = shortestQueue(this.parts);
 			q.lisaaJonoon(a);
 			a.setCurrentQueueIndex(this.parts.indexOf(q));
 			Trace.out(Trace.Level.INFO, "Customer " + a.getId() + " moved to PARTS_ORDERED queue. Queue size: " + q.getQueueSize());
+			message = String.format(
+					"[Diagnostics] Customer %d moved to PARTS_ORDERED queue. Queue size: %d.",
+					a.getId(),
+					q.getQueueSize()
+			);
+			notifyListeners(message);
 		}
 	}
 
@@ -174,7 +212,12 @@ public class OmaMoottori extends Moottori{
 		q.lisaaJonoon(c);
 
 		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " parts ordering complete.");
-
+		String message = String.format(
+				"[Parts] Customer %d parts ordering complete. Moved to CAR_READY queue. Queue size: %d.",
+				c.getId(),
+				q.getQueueSize()
+		);
+		notifyListeners(message);
 		c.setCurrentQueueIndex(this.carReady.indexOf(q));
 
 		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " moved to CAR_READY queue. Queue size: " + q.getQueueSize());
@@ -188,10 +231,16 @@ public class OmaMoottori extends Moottori{
 		q.lisaaJonoon(c);
 
 		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " simple maintenance complete.");
-
+		String message = String.format(
+				"[Maintenance] Customer %d maintenance complete. Moved to CAR_READY queue. Queue size: %d.",
+				c.getId(),
+				q.getQueueSize()
+		);
+		notifyListeners(message);
 		c.setCurrentQueueIndex(this.carReady.indexOf(q));
 
 		Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " moved to CAR_READY queue. Queue size: " + q.getQueueSize());
+
 	}
 
 	private void handleCarReady(Tapahtuma t) {
@@ -204,7 +253,13 @@ public class OmaMoottori extends Moottori{
 		} else {
 			servedRegularCars++;
 		}
-
+		String message = String.format(
+				"[Car Ready] Customer %d (%s) service completed. Total earnings: %.2f EUR.",
+				a.getId(),
+				a.isElectricCar() ? "Electric Car" : "Regular Car",
+				totalEarnings
+		);
+		notifyListeners(message);
 		a.raportti();
 	}
 
@@ -248,8 +303,27 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Rejected customers: " + rejectedCustomers);
 //		SimulationResultDao dao = new SimulationResultDao();
 //		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
+		int customersInQueue = 0;
+		for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
+			for (Palvelupiste p : servicePoints) {
+				customersInQueue += p.getQueueSize();
+			}
+		}
 
+		System.out.println("Customers still in queue: " + customersInQueue);
+
+		String message = String.format(
+				"[Simulation Finished] Simulation stopped at time %.2f.\n" +
+						"Total earnings: %.2f EUR\n" +
+						"Served regular cars: %d\n" +
+						"Served electric cars: %d\n" +
+						"Rejected customers: %d\n" +
+						"Customers still in queue: %d",
+				Kello.getInstance().getAika(), totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers, customersInQueue
+		);
+		notifyListeners(message);
 	}
+
 
 	public double calculateTotalEarnings() {
 		return totalEarnings;
@@ -290,6 +364,37 @@ public class OmaMoottori extends Moottori{
 		this.defaultCost = defaultCost;
 		this.electricCost = electricCost;
 		this.partsCost = partsCost;
+	}
+
+
+	public void addSimulationListener(SimulationListener listener) {
+		listeners.add(listener);
+	}
+
+	private void notifyListeners(String message) {
+		for (SimulationListener listener : listeners) {
+			listener.onLogMessage(message);
+		}
+	}
+
+	private boolean isSimulationFinished() {
+		for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
+			for (Palvelupiste p : servicePoints) {
+				if (p.getQueueSize() > 0 || p.onVarattu()) {
+					Trace.out(Trace.Level.INFO, "Simulation not finished: Queue not empty or service point is busy.");
+					return false;
+				}
+			}
+		}
+		for (Asiakas a : customers) {
+			if (!a.isServiceCompleted()) { // Если клиент не завершил обслуживание
+				Trace.out(Trace.Level.INFO, "Simulation not finished: Customer " + a.getId() + " is not processed.");
+				return false;
+			}
+		}
+
+		Trace.out(Trace.Level.INFO, "Simulation finished: All customers processed.");
+		return true;
 	}
 
 }

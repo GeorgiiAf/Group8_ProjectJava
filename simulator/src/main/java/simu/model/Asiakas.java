@@ -95,5 +95,9 @@ public double calculateServiceCost() {
     baseCost += timeSpent * 2.0;
 
     return baseCost;
-}
+
+	}
+	public boolean isServiceCompleted() {
+		return poistumisaika > 0;
+	}
 }
