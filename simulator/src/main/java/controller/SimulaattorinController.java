@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
 import simu.model.OmaMoottori;
@@ -29,10 +30,7 @@ import simu.model.Palvelupiste;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
 THAT SHOULD BE THE MAIN CONTROLLER
@@ -62,14 +60,18 @@ public class SimulaattorinController {
 
     // Maps for service point and customer configurations
     private final Map<String, Integer> servicePointsMap = new LinkedHashMap<>();
-    private final Map<String, Double> customerTypesMap = new LinkedHashMap<>();
-    private final Map<String, Integer> maxSPoints = new LinkedHashMap<>();
+    private final Map<String, Integer> maxPointsSpinner = new LinkedHashMap<>();
+    private final Map<String, Integer> prices = new LinkedHashMap<>();
 
 //    private AnimationTimer animationTimer;
     private Map<String, Point2D> servicePointPositions = new LinkedHashMap<>();
 
+    int carServiceCostDefault = 150;
+    int electricCarServiceCostDefault = 300;
+    int partsCostDefault = 75;
+
     @FXML private TextField aika;
-    @FXML private TextField viive;
+    @FXML private Label speedLabel;
     @FXML private Label tulos;
     @FXML private Button startButton;
     @FXML private Button stopButton;
@@ -82,15 +84,19 @@ public class SimulaattorinController {
     @FXML private Spinner<Integer> maintenanceSpots;
     @FXML private Spinner<Integer> carReadySpots;
 
-    @FXML private TextField regularCarServiceCost;
-    @FXML private TextField electricCarServiceCost;
-    @FXML private TextField partsCost;
+    @FXML private Slider defaultCostSlider;
+    @FXML private Slider electricCostSlider;
+    @FXML private Slider partsCostSlider;
+    @FXML private Label defaultCostLabel;
+    @FXML private Label electricCostLabel;
+    @FXML private Label partsCostLabel;
 
     @FXML private Canvas naytto;
     @FXML private Button showResultsButton;
     @FXML private Button helpButton;
     @FXML private Canvas workshopCanvas;
     @FXML private ListView<TextFlow> logTextArea;
+    @FXML private ListView<TextFlow> infoBox;
 
     @FXML private Slider arrivalTimeSlider;
     @FXML private Slider diagnosticsTimeSlider;
@@ -159,12 +165,28 @@ public class SimulaattorinController {
             drawServicePoints();
         }
 
-        maxSPoints.put("CarArrives", 40);
-        maxSPoints.put("DiagnosticsDone", 20);
+        maxPointsSpinner.put("CarArrives", 40);
+        maxPointsSpinner.put("DiagnosticsDone", 30);
+        maxPointsSpinner.put("Parts", 30);
+        maxPointsSpinner.put("Maintenance", 30);
+        maxPointsSpinner.put("CarReady", 30);
         servicePointsMap.put("CarArrives", arrivalSpots.getValue());
         servicePointsMap.put("DiagnosticsDone", diagnosticsSpots.getValue());
+        servicePointsMap.put("Parts", partsSpots.getValue());
+        servicePointsMap.put("Maintenance", maintenanceSpots.getValue());
+        servicePointsMap.put("CarReady", carReadySpots.getValue());
+
+        sliderTextUpdate(carReadyTimeSlider);
+        sliderTextUpdate(diagnosticsTimeSlider);
+        sliderTextUpdate(partsTimeSlider);
+        sliderTextUpdate(maintenanceTimeSlider);
+        sliderTextUpdate(carReadyTimeSlider);
 
         initializeSpinners();
+
+        linkSliderToLabel(defaultCostSlider, defaultCostLabel);
+        linkSliderToLabel(electricCostSlider, electricCostLabel);
+        linkSliderToLabel(partsCostSlider, partsCostLabel);
 
         animationTimer = new AnimationTimer() {
             @Override
@@ -190,7 +212,7 @@ public class SimulaattorinController {
 
     public long getViive() {
         try {
-            return Long.parseLong(viive.getText());
+            return Long.parseLong(speedLabel.getText());
         } catch (NumberFormatException e) {
             showErrorMessage("Please enter a valid delay value");
             return 0;
@@ -490,6 +512,10 @@ public class SimulaattorinController {
             if (currentDelay > 100) {
                 moottori.setViive(currentDelay - 100);
             }
+            else if (currentDelay > 10) {
+                moottori.setViive(currentDelay - 10);
+            }
+            updateLabelWithValue((int) currentDelay, speedLabel);
         }
     }
 
@@ -497,7 +523,13 @@ public class SimulaattorinController {
     private void handleSlowDownButton() {
         if (moottori != null) {
             long currentDelay = moottori.getViive();
-            moottori.setViive(currentDelay + 100);
+            if (currentDelay < 100) {
+                moottori.setViive(100);
+            }
+            else {
+                moottori.setViive(currentDelay + 100);
+            }
+            updateLabelWithValue((int) currentDelay, speedLabel);
         }
     }
 
@@ -515,25 +547,14 @@ public class SimulaattorinController {
         double yStep = 75;
         int typeIndex = 0;
 
-        for (Map.Entry<String, Integer> entry : maxSPoints.entrySet()) {
+        for (Map.Entry<String, Integer> entry : maxPointsSpinner.entrySet()) {
             String pointType = entry.getKey();
             int totalPoints = entry.getValue();
             int activatedPoints = servicePointsMap.getOrDefault(pointType, 0);
-//            int totalPoints = 30;
-//            int activatedPoints = 10;
             double y = yStep * (typeIndex + 1);
 
-            if (pointType.equals("CarArrives") && typeIndex > 0) {
-                System.out.println("Drawing");
-                y += 2;
-            } else if (pointType.equals("DiagnosticsDone") && typeIndex > 0) {
-                y += 85;
-            } else if (typeIndex > 0) {
-                y += yStep;
-            }
-
             drawServicePoints(gc, pointType, activatedPoints, totalPoints, y);
-            drawTypeLabel(gc, pointType, y - 15);
+            drawTypeLabel(gc, pointType, y);
 
             typeIndex++;
         }
@@ -601,15 +622,45 @@ public class SimulaattorinController {
         });
     }
 
+    public void loggingChanges(String s) {
+        Platform.runLater(() -> {
+            Text timeText = new Text();
+            timeText.setStyle(
+                    "-fx-font-family: 'Consolas';" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-fill: green;"
+            );
+
+            Text messageText = new Text(s);
+            messageText.setStyle(
+                    "-fx-font-family: 'Consolas';" +
+                            "-fx-fill: green;"
+            );
+
+            TextFlow textFlow = new TextFlow(timeText, messageText);
+
+            infoBox.getItems().add(textFlow);
+
+            if (infoBox.getItems().size() > 100) {
+                infoBox.getItems().remove(0);
+            }
+
+            infoBox.scrollTo(infoBox.getItems().size() - 1);
+        });
+    }
+
     private void initializeSpinners() {
         setupSpinner(arrivalSpots, "CarArrives");
         setupSpinner(diagnosticsSpots, "DiagnosticsDone");
+        setupSpinner(partsSpots, "Parts");
+        setupSpinner(maintenanceSpots, "Maintenance");
+        setupSpinner(carReadySpots, "CarReady");
     }
 
     private void setupSpinner(Spinner<Integer> spinner, String pointType) {
         int defaultValue = spinner.getValue();
 
-        int maxPoints = maxSPoints.getOrDefault(pointType, 0);
+        int maxPoints = maxPointsSpinner.getOrDefault(pointType, 0);
 
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxPoints, defaultValue);
         spinner.setValueFactory(valueFactory);
@@ -621,6 +672,39 @@ public class SimulaattorinController {
 
 
             drawAllServicePoints();
+        });
+    }
+
+    public void sliderTextUpdate(Slider slider) {
+        slider.setOnMouseReleased(event -> {
+            loggingChanges(slider.getId() + " -> " + slider.getValue());
+        });
+    }
+
+    private void updatePrices() {
+        if(this.moottori != null) {
+            double newDefaultCost = defaultCostSlider.getValue();
+            double newElectricCost = electricCostSlider.getValue();
+            double newPartsCost = partsCostSlider.getValue();
+
+            moottori.setAllPrices(newDefaultCost, newElectricCost, newPartsCost);
+        }
+    }
+
+    private static void updateLabelWithValue(int value, Label label) {
+        label.setText(String.valueOf(value));
+    }
+
+    public void linkSliderToLabel(Slider slider, Label label) {
+        updateLabelWithValue((int) slider.getValue(), label);
+
+        slider.setOnMouseReleased(event -> {
+            updatePrices();
+            loggingChanges(slider.getId() + " -> " + slider.getValue());
+        });
+
+        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateLabelWithValue(newValue.intValue(), label);
         });
     }
 

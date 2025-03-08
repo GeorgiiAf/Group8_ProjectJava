@@ -8,7 +8,17 @@ public class newCustomer {
 
     private final Random random;
 
-    public newCustomer(double electricCarCustomers, double noPartsNeeded) {
+    private double defaultCost;
+    private double electricCost;
+    private double partsCost;
+
+    public newCustomer(
+            double electricCarCustomers,
+            double noPartsNeeded,
+            double defaultCost,
+            double electricCost,
+            double partsCost
+    ) {
         this.electricCarCustomers = electricCarCustomers;
         this.noPartsNeeded = noPartsNeeded;
         this.random = new Random();
@@ -18,6 +28,6 @@ public class newCustomer {
         boolean isElectricCar = this.random.nextDouble() < (this.electricCarCustomers / 100.0);
         boolean noPartsNeeded = this.random.nextDouble() < (this.noPartsNeeded / 100.0);
 
-        return new Asiakas(isElectricCar, noPartsNeeded);
+        return new Asiakas(isElectricCar, noPartsNeeded, defaultCost, electricCost, partsCost);
     }
 }

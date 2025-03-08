@@ -1,11 +1,9 @@
 package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
-import entity.SimulationResult;
 import simu.framework.*;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
-import dao.SimulationResultDao;
 
 import java.util.*;
 
@@ -33,12 +31,6 @@ public class OmaMoottori extends Moottori{
 	private int maintenanceSpots = 10;
 	private int carReadySpots = 10;
 
-	private int electricCarSpots = 0;
-	private int customerCount = 0;
-	private int regularCarServiceCost = 0;
-	private int electricCarServiceCost = 0;
-	private int partsCost = 0;
-
 	private boolean simulointiLoppu = false;
 	private double simulointiaika;
 	private long viive;
@@ -48,6 +40,10 @@ public class OmaMoottori extends Moottori{
 	private int partsTime;
 	private int maintenanceTime;
 	private int readyTime;
+
+	private double defaultCost = 150;
+	private double electricCost = 300;
+	private double partsCost = 75;
 
 	public OmaMoottori(){
 
@@ -79,7 +75,7 @@ public class OmaMoottori extends Moottori{
 	}
 	@Override
 	protected void alustukset() {
-		saapumisprosessi.generoiSeuraava(new newCustomer(25.0, 10.0).buildCustomer());
+		saapumisprosessi.generoiSeuraava(new newCustomer(25.0, 10.0, this.defaultCost, this.electricCost, this.partsCost).buildCustomer());
 		this.servedElectricCars = 0;
 		this.servedRegularCars = 0;
 		this.totalEarnings = 0.0;
@@ -136,10 +132,15 @@ public class OmaMoottori extends Moottori{
 
 	private void handleArrival(Tapahtuma t) {
 		Asiakas uusiAsiakas =
-				new newCustomer(25.0, 10.0)
+				new newCustomer(
+	25.0,
+		10.0,
+					this.defaultCost,
+					this.electricCost,
+					this.partsCost
+				)
 					.buildCustomer();
 		customers.add(uusiAsiakas);
-
 		Palvelupiste q = shortestQueue(this.diagnostics);
 		q.lisaaJonoon(uusiAsiakas);
 		uusiAsiakas.setCurrentQueueIndex(this.diagnostics.indexOf(q));
@@ -245,8 +246,8 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Served regular cars: " + servedRegularCars);
 		System.out.println("Served electric cars: " + servedElectricCars);
 		System.out.println("Rejected customers: " + rejectedCustomers);
-		SimulationResultDao dao = new SimulationResultDao();
-		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
+//		SimulationResultDao dao = new SimulationResultDao();
+//		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
 
 	}
 
@@ -277,24 +278,18 @@ public class OmaMoottori extends Moottori{
 		this.simulointiaika = aika;
 	}
 
-
-	public void setViive(long viive) {
-		if (viive < 0) {
-			throw new IllegalArgumentException("Delay must be non-negative");
-		}
-		this.viive = viive;
-	}
-
-	public long getViive() {
-		return viive;
-	}
-
 	public void setAllServiceTime(int arrival, int diagnostics, int parts, int maintenance, int ready){
 		this.arrivalTime = arrival;
 		this.diagnosticsTime = diagnostics;
 		this.partsTime = parts;
 		this.maintenanceTime = maintenance;
 		this.readyTime = ready;
+	}
+
+	public void setAllPrices(double defaultCost, double electricCost, double partsCost) {
+		this.defaultCost = defaultCost;
+		this.electricCost = electricCost;
+		this.partsCost = partsCost;
 	}
 
 }

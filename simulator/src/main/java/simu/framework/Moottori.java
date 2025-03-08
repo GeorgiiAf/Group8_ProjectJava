@@ -7,7 +7,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 		private Kello kello;
 
 		protected Tapahtumalista tapahtumalista;
-		private long viive = 0;
+		private long viive = 100;
 		private boolean paused = false;
 
 
@@ -29,6 +29,9 @@ package simu.framework;			// I DKN  REWORK/DELETE
 	}
 
 	public void setViive(long viive) {
+		if (viive < 0) {
+			throw new IllegalArgumentException("Delay must be non-negative");
+		}
 		this.viive = viive;
 	}
 
@@ -64,7 +67,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 					if(paused){
 						wait();
 					}
-					Thread.sleep((100));
+					Thread.sleep(viive > 0 ? viive : 100);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}

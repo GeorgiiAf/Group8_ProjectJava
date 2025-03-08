@@ -13,11 +13,18 @@ public class Asiakas {
 	private final boolean isElectricCar;
 	private final boolean isNoPartsNeeded;
 
+	private double defaultCost;
+	private double electricCost;
+	private double partsCost;
+
 	private int currentQueueIndex; //Where this customer is
 
-	public Asiakas(boolean isElectricCar, boolean isNoPartsNeeded) {
+	public Asiakas(boolean isElectricCar, boolean isNoPartsNeeded, double defaultCost, double electricCost, double partsCost) {
         this.isElectricCar = isElectricCar;
 		this.isNoPartsNeeded = isNoPartsNeeded;
+		this.defaultCost = defaultCost;
+		this.electricCost = electricCost;
+		this.partsCost = partsCost;
         id = i++;
 	    
 		saapumisaika = Kello.getInstance().getAika();
@@ -71,14 +78,17 @@ public class Asiakas {
 	}
 
 public double calculateServiceCost() {
-    double baseCost = 100.0;
+    double baseCost = 0.0;
 
     if (isElectricCar()) {
-        baseCost += 50.0;
+        baseCost += electricCost;
     }
+	else {
+		baseCost += defaultCost;
+	}
 
     if (!isNoPartsNeeded()) {
-        baseCost += 200.0;
+        baseCost += partsCost;
     }
 
     double timeSpent = getPoistumisaika() - getSaapumisaika();
