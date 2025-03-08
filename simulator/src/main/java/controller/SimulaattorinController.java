@@ -645,14 +645,20 @@ public class SimulaattorinController implements SimulationListener {
         paused = !paused;
         m.setPause();
         Trace.out(Trace.Level.INFO, "PAUSE PRESSED");
-        if (paused) {
+        boolean wasPaused = paused;
+        paused = false;
+        if (wasPaused) {
             logging("Simulation paused");
         } else {
             logging("Simulation resumed");
         }
+
+        paused = wasPaused;
     }
 
     public void logging(String s) {
+        if (!paused) {
+
         Platform.runLater(() -> {
             LocalTime currentTime = LocalTime.now();
             String timeString = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
@@ -673,6 +679,7 @@ public class SimulaattorinController implements SimulationListener {
             logTextArea.scrollTo(logTextArea.getItems().size() - 1);
         });
     }
+}
 
     public void loggingChanges(String s) {
         Platform.runLater(() -> {
