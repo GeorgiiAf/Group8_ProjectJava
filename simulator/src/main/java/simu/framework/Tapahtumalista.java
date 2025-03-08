@@ -18,9 +18,8 @@ public class Tapahtumalista {
 		Trace.out(Trace.Level.INFO,"Tapahtumalistaan lisätään uusi " + t.getTyyppi() + " " + t.getAika());
 		lista.add(t);
 	}
-	
+
 	public double getSeuraavanAika(){
 		return lista.peek().getAika();
 	}
-
 }

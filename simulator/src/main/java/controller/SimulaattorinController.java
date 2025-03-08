@@ -3,6 +3,10 @@ package controller;
 //  REWORK  THIS
 
 import java.awt.Point;
+
+import dao.SimulationResultDao;
+import entity.SimulationResult;
+import simu.framework.SimulationResults;
 import simu.model.SimulationListener;
 
 import javafx.animation.AnimationTimer;
@@ -29,6 +33,7 @@ import simu.model.Palvelupiste;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -350,6 +355,8 @@ public class SimulaattorinController implements SimulationListener {
 
         moottori.setSimulointiLoppu(true);
 
+
+
         try {
             simulationThread.join(1000);
         } catch (InterruptedException e) {
@@ -357,12 +364,24 @@ public class SimulaattorinController implements SimulationListener {
         }
 
         if (moottori != null) {
+            SimulationResult result = new SimulationResult(
+                    moottori.calculateTotalEarnings(),
+                    moottori.getServedRegularCars(),
+                    moottori.getServedElectricCars(),
+                    moottori.getRejectedCustomers()
+            );
+
+            SimulationResultDao dao = new SimulationResultDao();
+            dao.saveSimulationResult(result);
+
+
             String message = String.format(
-                    "[Simulation Stopped] Simulation stopped by user.\n" +
-                            "Total earnings: %.2f EUR\n" +
-                            "Served regular cars: %d\n" +
-                            "Served electric cars: %d\n" +
-                            "Rejected customers: %d",
+                    """
+                            [Simulation Stopped] Simulation stopped by user.
+                            Total earnings: %.2f EUR
+                            Served regular cars: %d
+                            Served electric cars: %d
+                            Rejected customers: %d""",
                     moottori.calculateTotalEarnings(),
                     moottori.getServedRegularCars(),
                     moottori.getServedElectricCars(),
@@ -743,6 +762,6 @@ public class SimulaattorinController implements SimulationListener {
 
     // later add this button
     public void handleSetMechanics(ActionEvent actionEvent) {
-        return;
+
     }
 }

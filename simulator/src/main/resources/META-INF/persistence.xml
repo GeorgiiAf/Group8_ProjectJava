@@ -3,15 +3,16 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
     <persistence-unit name="SimulationResult">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>dao.SimulationResultDao</class>
+        <class>entity.SimulationResult</class>
+
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/simulation_results_db"/>
             <property name="jakarta.persistence.jdbc.user" value="appuser"/>
             <property name="jakarta.persistence.jdbc.password" value="password"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
-            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

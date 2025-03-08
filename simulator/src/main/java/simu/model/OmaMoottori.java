@@ -1,6 +1,8 @@
 package simu.model;
 
+import dao.SimulationResultDao;
 import eduni.distributions.ContinuousGenerator;
+import entity.SimulationResult;
 import simu.framework.*;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
@@ -301,6 +303,19 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Served regular cars: " + servedRegularCars);
 		System.out.println("Served electric cars: " + servedElectricCars);
 		System.out.println("Rejected customers: " + rejectedCustomers);
+
+		SimulationResult result = new SimulationResult(
+				totalEarnings,
+				servedRegularCars,
+				servedElectricCars,
+				rejectedCustomers
+		);
+
+		SimulationResultDao dao = new SimulationResultDao();
+		dao.saveSimulationResult(result);
+
+
+
 //		SimulationResultDao dao = new SimulationResultDao();
 //		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
 		int customersInQueue = 0;
