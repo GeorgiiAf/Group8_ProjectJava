@@ -1,7 +1,7 @@
 package controller;
 
 /*
-Contoller for help window
+Controller for help window
 
 
  */

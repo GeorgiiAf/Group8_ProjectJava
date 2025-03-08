@@ -215,10 +215,6 @@ public class SimulaattorinController implements SimulationListener {
     }
 
 
-
-
-
-
     public double getAika() {
         try {
             return Double.parseDouble(aika.getText());
@@ -355,8 +351,6 @@ public class SimulaattorinController implements SimulationListener {
 
         moottori.setSimulointiLoppu(true);
 
-
-
         try {
             simulationThread.join(1000);
         } catch (InterruptedException e) {
@@ -377,10 +371,8 @@ public class SimulaattorinController implements SimulationListener {
 
             String message = String.format(
                     """
-                            [Simulation Stopped] Simulation stopped by user.
-                            Total earnings: %.2f EUR
-                            Served regular cars: %d
-                            Served electric cars: %d
+                            [Simulation Stopped] Simulation stopped by user. Total earnings: %.2f EUR
+                            Served regular cars: %d Served electric cars: %d
                             Rejected customers: %d""",
                     moottori.calculateTotalEarnings(),
                     moottori.getServedRegularCars(),
@@ -393,7 +385,6 @@ public class SimulaattorinController implements SimulationListener {
 
         if (startButton != null) startButton.setDisable(false);
         if (stopButton != null) stopButton.setDisable(true);
-
         animationTimer.stop();
     }
 
@@ -425,8 +416,6 @@ public class SimulaattorinController implements SimulationListener {
             VBox root = loader.load();
 
             ResultsController resultsController = loader.getController();
-
-
             if (moottori != null) {
                 updateResultsFromMoottori();
             }
