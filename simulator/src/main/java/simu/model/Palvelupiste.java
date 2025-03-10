@@ -12,11 +12,9 @@ public class Palvelupiste {
 	private final Tapahtumalista tapahtumalista;
 	private final TapahtumanTyyppi skeduloitavanTapahtumanTyyppi;
 
-	// New fields
-	private final String type; // Type of the service point
-	private final int id; // Unique ID for the service point
+	private final String type;
+	private final int id;
 
-	// Static counter for generating unique IDs
 	private static int nextId = 0;
 
 	private boolean varattu = false;
@@ -82,16 +80,7 @@ public class Palvelupiste {
 		return totalBusyTime / totalTime;
 	}
 
-	// New methods
 	public String getType() {
 		return type;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public boolean hasCustomer() {
-		return !jono.isEmpty() || varattu;
 	}
 }
