@@ -265,7 +265,6 @@ public class SimulaattorinController implements SimulationListener {
         Trace.setTraceLevel(Level.INFO);
 
         simulationThread = new Thread(() -> {
-            moottori = new OmaMoottori();
             int arrivalTime = (int) arrivalTimeSlider.getValue();
             int diagnosticsTime = (int) diagnosticsTimeSlider.getValue();
             int partsTime = (int) partsTimeSlider.getValue();
