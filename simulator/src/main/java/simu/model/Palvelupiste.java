@@ -12,22 +12,28 @@ public class Palvelupiste {
 	private final Tapahtumalista tapahtumalista;
 	private final TapahtumanTyyppi skeduloitavanTapahtumanTyyppi;
 
+	// New fields
+	private final String type; // Type of the service point
+	private final int id; // Unique ID for the service point
 
-	//JonoStartegia strategia; //optio: asiakkaiden järjestys
-	
+	// Static counter for generating unique IDs
+	private static int nextId = 0;
+
 	private boolean varattu = false;
 	private double totalBusyTime = 0;
 	private double lastStartTime = 0;
 
-
-	public Palvelupiste(int maxEngineers, ContinuousGenerator generator, Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi){
-        this.maxEngineers = maxEngineers;
+	public Palvelupiste(int maxEngineers, ContinuousGenerator generator, Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi) {
+		this.maxEngineers = maxEngineers;
 		this.availableEngineers = maxEngineers;
-        this.tapahtumalista = tapahtumalista;
+		this.tapahtumalista = tapahtumalista;
 		this.generator = generator;
 		this.skeduloitavanTapahtumanTyyppi = tyyppi;
-	}
 
+		// Initialize type and ID
+		this.type = tyyppi.toString(); // Convert TapahtumanTyyppi to String
+		this.id = nextId++;
+	}
 
 	public void lisaaJonoon(Asiakas a) {
 		jono.add(a);
@@ -35,8 +41,7 @@ public class Palvelupiste {
 		Trace.out(Trace.Level.INFO, "Asiakas " + a.getId() + " lisättiin jonoon palvelupisteeseen " + skeduloitavanTapahtumanTyyppi);
 	}
 
-
-	public Asiakas otaJonosta(){
+	public Asiakas otaJonosta() {
 		if (varattu) {
 			double endTime = Kello.getInstance().getAika();
 			totalBusyTime += (endTime - lastStartTime);
@@ -54,18 +59,17 @@ public class Palvelupiste {
 			varattu = true;
 			lastStartTime = Kello.getInstance().getAika();
 			double palveluAika = generator.sample();
-			Trace.out(Trace.Level.INFO, "PALVELUAIKA-> "+ palveluAika);
+			Trace.out(Trace.Level.INFO, "PALVELUAIKA-> " + palveluAika);
 			Tapahtuma t = new Tapahtuma(skeduloitavanTapahtumanTyyppi, Kello.getInstance().getAika() + palveluAika, this.jono.getLast());
 			tapahtumalista.lisaa(t);
 		}
 	}
 
-	public boolean onVarattu(){
+	public boolean onVarattu() {
 		return varattu;
 	}
 
-
-	public boolean onJonossa(){
+	public boolean onJonossa() {
 		return !jono.isEmpty();
 	}
 
@@ -78,5 +82,16 @@ public class Palvelupiste {
 		return totalBusyTime / totalTime;
 	}
 
+	// New methods
+	public String getType() {
+		return type;
+	}
 
+	public int getId() {
+		return id;
+	}
+
+	public boolean hasCustomer() {
+		return !jono.isEmpty() || varattu;
+	}
 }
