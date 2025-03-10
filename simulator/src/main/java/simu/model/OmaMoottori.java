@@ -402,7 +402,7 @@ public class OmaMoottori extends Moottori{
 			}
 		}
 		for (Asiakas a : customers) {
-			if (!a.isServiceCompleted()) { // Если клиент не завершил обслуживание
+			if (!a.isServiceCompleted()) {
 				Trace.out(Trace.Level.INFO, "Simulation not finished: Customer " + a.getId() + " is not processed.");
 				return false;
 			}

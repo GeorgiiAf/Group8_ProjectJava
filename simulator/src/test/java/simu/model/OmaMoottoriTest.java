@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import simu.framework.Tapahtuma;
 import simu.framework.Tapahtumalista;
+import simu.framework.Trace;
 
 class OmaMoottoriTest {
 
@@ -14,8 +15,12 @@ class OmaMoottoriTest {
 
     @BeforeEach
     void setUp() {
+        Trace.setTraceLevel(Trace.Level.INFO);
         tapahtumalista = new Tapahtumalista();
         moottori = new OmaMoottori();
+        if (moottori.getAllServicePointsList().isEmpty()) {
+            moottori.();
+        }
     }
 
     @Test
