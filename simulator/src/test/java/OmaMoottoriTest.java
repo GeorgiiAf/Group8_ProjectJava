@@ -1,5 +1,3 @@
-package simu.model;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import simu.framework.Tapahtuma;
 import simu.framework.Tapahtumalista;
 import simu.framework.Trace;
+import simu.model.OmaMoottori;
+import simu.model.TapahtumanTyyppi;
 
 class OmaMoottoriTest {
 

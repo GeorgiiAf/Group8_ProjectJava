@@ -137,11 +137,12 @@ public class OmaMoottori extends Moottori{
 			simulointiLoppu = true;
 
 			String message = String.format(
-					"[Simulation Finished] All customers processed.\n" +
-							"Total earnings: %.2f EUR\n" +
-							"Served regular cars: %d\n" +
-							"Served electric cars: %d\n" +
-							"Rejected customers: %d",
+                    """
+                            [Simulation Finished] All customers processed.
+                            Total earnings: %.2f EUR
+                            Served regular cars: %d
+                            Served electric cars: %d
+                            Rejected customers: %d""",
 					totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers
 			);
 			notifyListeners(message);
@@ -298,12 +299,26 @@ public class OmaMoottori extends Moottori{
 	}
 
 	@Override
-	protected void tulokset() {
+	public void tulokset() {
+		if (simulointiLoppu) {
+			return;
+		}
+
+		simulointiLoppu = true;
+
 		System.out.println("Simulointi päättyi kello " + Kello.getInstance().getAika());
 		System.out.println("Total earnings: " + totalEarnings);
 		System.out.println("Served regular cars: " + servedRegularCars);
 		System.out.println("Served electric cars: " + servedElectricCars);
-		System.out.println("Rejected customers: " + rejectedCustomers);
+
+		int customersInQueue = 0;
+		for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
+			for (Palvelupiste p : servicePoints) {
+				customersInQueue += p.getQueueSize();
+			}
+		}
+
+		rejectedCustomers += customersInQueue;
 
 		SimulationResult result = new SimulationResult(
 				totalEarnings,
@@ -315,29 +330,20 @@ public class OmaMoottori extends Moottori{
 		SimulationResultDao dao = new SimulationResultDao();
 		dao.saveSimulationResult(result);
 
-
-
-//		SimulationResultDao dao = new SimulationResultDao();
-//		dao.saveSimulationResult(new SimulationResult(totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers));
-		int customersInQueue = 0;
-		for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
-			for (Palvelupiste p : servicePoints) {
-				customersInQueue += p.getQueueSize();
-			}
-		}
-
-		System.out.println("Customers still in queue: " + customersInQueue);
-
 		String message = String.format(
-				"[Simulation Finished] Simulation stopped at time %.2f.\n" +
-						"Total earnings: %.2f EUR\n" +
-						"Served regular cars: %d\n" +
-						"Served electric cars: %d\n" +
-						"Rejected customers: %d\n" +
-						"Customers still in queue: %d",
+				"""
+                        [Simulation Finished] Simulation stopped at time %.2f.
+                        Total earnings: %.2f EUR
+                        Served regular cars: %d
+                        Served electric cars: %d
+                        Rejected customers: %d
+                        Customers still in queue: %d""",
 				Kello.getInstance().getAika(), totalEarnings, servedRegularCars, servedElectricCars, rejectedCustomers, customersInQueue
 		);
+
 		notifyListeners(message);
+
+		System.out.println("Customers still in queue: " + customersInQueue);
 	}
 
 
@@ -413,4 +419,7 @@ public class OmaMoottori extends Moottori{
 		return true;
 	}
 
+	public boolean isSimulointiLoppu() {
+		return simulointiLoppu;
+	}
 }

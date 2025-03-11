@@ -1,9 +1,5 @@
 package controller;
 
-//  REWORK  THIS
-
-import dao.SimulationResultDao;
-import entity.SimulationResult;
 import simu.model.SimulationListener;
 
 import javafx.animation.AnimationTimer;
@@ -318,11 +314,9 @@ public class SimulaattorinController implements SimulationListener {
 
     @FXML
     private void handleStopButton() {
-        if (!simulationRunning || moottori == null) {
+        if (!simulationRunning || moottori == null || moottori.isSimulointiLoppu()) {
             return;
         }
-
-        moottori.setSimulointiLoppu(true);
 
         try {
             simulationThread.join(1000);
@@ -331,30 +325,8 @@ public class SimulaattorinController implements SimulationListener {
         }
 
         if (moottori != null) {
-            SimulationResult result = new SimulationResult(
-                    moottori.calculateTotalEarnings(),
-                    moottori.getServedRegularCars(),
-                    moottori.getServedElectricCars(),
-                    moottori.getRejectedCustomers()
-            );
-
-            SimulationResultDao dao = new SimulationResultDao();
-            dao.saveSimulationResult(result);
-
-
-            String message = String.format(
-                    """
-                            [Simulation Stopped] Simulation stopped by user. Total earnings: %.2f EUR
-                            Served regular cars: %d Served electric cars: %d
-                            Rejected customers: %d""",
-                    moottori.calculateTotalEarnings(),
-                    moottori.getServedRegularCars(),
-                    moottori.getServedElectricCars(),
-                    moottori.getRejectedCustomers()
-            );
-            logging(message);
+            moottori.tulokset();
         }
-
 
         if (startButton != null) startButton.setDisable(false);
         if (stopButton != null) stopButton.setDisable(true);
