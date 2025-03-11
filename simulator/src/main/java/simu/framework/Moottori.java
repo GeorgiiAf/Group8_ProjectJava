@@ -9,6 +9,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 		protected Tapahtumalista tapahtumalista;
 		private long viive = 100;
 		private boolean paused = false;
+		private boolean stopped = false;
 
 
 
@@ -51,7 +52,7 @@ package simu.framework;			// I DKN  REWORK/DELETE
 
 	public void aja(){
 		alustukset(); // luodaan mm. ensimmäinen tapahtuma
-		while (simuloidaan()){
+		while (simuloidaan() && !stopped){
 			
 			Trace.out(Trace.Level.INFO, "\nA-vaihe: kello on " + nykyaika());
 			kello.setAika(nykyaika());
@@ -90,6 +91,10 @@ package simu.framework;			// I DKN  REWORK/DELETE
 	
 	private boolean simuloidaan(){
 		return kello.getAika() < simulointiaika;
+	}
+
+	public boolean stopSimulation(){
+		return stopped = !stopped;
 	}
 
 	protected abstract void suoritaTapahtuma(Tapahtuma t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa

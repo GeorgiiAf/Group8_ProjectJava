@@ -36,7 +36,6 @@ public class OmaMoottori extends Moottori{
 
 	private boolean simulointiLoppu = false;
 	private double simulointiaika;
-	private long viive;
 
 	private int arrivalTime;
 	private int diagnosticsTime;
@@ -101,7 +100,7 @@ public class OmaMoottori extends Moottori{
 		this.allServicePoints.add(parts);
 		this.allServicePoints.add(simpleMaintenance);
 		this.allServicePoints.add(carReady);
-
+		Asiakas.i = 0;
 	}
 
 	@Override

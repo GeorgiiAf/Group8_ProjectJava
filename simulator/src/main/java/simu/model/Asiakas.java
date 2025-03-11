@@ -7,7 +7,7 @@ public class Asiakas {
 	private double saapumisaika;
 	private double poistumisaika;
 	private final int id;
-	private static int i = 1;
+	public static int i = 1;
 	private static double sum = 0;
 
 	private final boolean isElectricCar;

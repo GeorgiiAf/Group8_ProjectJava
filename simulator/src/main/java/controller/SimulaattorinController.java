@@ -1,14 +1,11 @@
 package controller;
 
-//  REWORK  THIS
-
 import dao.SimulationResultDao;
 import entity.SimulationResult;
 import simu.model.SimulationListener;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -41,11 +38,6 @@ public class SimulaattorinController implements SimulationListener {
     public Label servedElectricCarsLabel;
     public Button slowDownButton;
     public Button speedUpButton;
-    public Slider partsWaitingTimeSlider;
-    public Button setMechanicsButton;
-    public TextField mechanicsCountField;
-    public Slider arrivalTimeSlider5;
-    public Slider arrivalTimeSlider6;
     public Label rejectedCustomers;
     private IKontrolleriForV kontrolleri;
     private OmaMoottori moottori;
@@ -253,11 +245,9 @@ public class SimulaattorinController implements SimulationListener {
             inputErrorLabel.setVisible(false);
         }
 
-        if (moottori == null) {
-            moottori = new OmaMoottori();
-            moottori.addSimulationListener(this);
 
-        }
+        moottori = new OmaMoottori();
+        moottori.addSimulationListener(this);
         moottori.setSimulointiLoppu(false);
 
 
@@ -323,6 +313,7 @@ public class SimulaattorinController implements SimulationListener {
         }
 
         moottori.setSimulointiLoppu(true);
+        moottori.stopSimulation();
 
         try {
             simulationThread.join(1000);
