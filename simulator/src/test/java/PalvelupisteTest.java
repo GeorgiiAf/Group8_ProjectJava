@@ -1,9 +1,10 @@
-package simu.model;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.Tapahtumalista;
+import simu.model.Asiakas;
+import simu.model.Palvelupiste;
+import simu.model.TapahtumanTyyppi;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
