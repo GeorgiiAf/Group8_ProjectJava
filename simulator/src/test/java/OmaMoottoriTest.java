@@ -10,17 +10,29 @@ import simu.model.TapahtumanTyyppi;
 
 class OmaMoottoriTest {
 
-    private OmaMoottori moottori;
+    private TestableOmaMoottori moottori;
     private Tapahtumalista tapahtumalista;
+
+    private static class TestableOmaMoottori extends OmaMoottori {
+        @Override
+        public void alustukset() {
+            super.alustukset();
+        }
+
+        @Override
+        public void suoritaTapahtuma(Tapahtuma tapahtuma) {
+            super.suoritaTapahtuma(tapahtuma);
+        }
+    }
 
     @BeforeEach
     void setUp() {
         Trace.setTraceLevel(Trace.Level.INFO);
         tapahtumalista = new Tapahtumalista();
-        moottori = new OmaMoottori();
-        if (moottori.getAllServicePointsList().isEmpty()) {
-            moottori.();
-        }
+        moottori = new TestableOmaMoottori();
+        moottori.setAllServiceTime(10, 15, 20, 10, 10); // Set service times
+        moottori.setSpotValues(10, 15, 20, 10, 10); // Set spot values
+        moottori.alustukset(); // Initialize the motor
     }
 
     @Test
@@ -49,8 +61,6 @@ class OmaMoottoriTest {
         moottori.suoritaTapahtuma(tapahtuma);
         boolean customerAdded = moottori.getAllServicePointsList().get(0).stream()
                 .anyMatch(p -> p.getQueueSize() > 0);
-        assertTrue(customerAdded, "");
+        assertTrue(customerAdded, "Customer should be added to the arrival queue");
     }
-
-
 }

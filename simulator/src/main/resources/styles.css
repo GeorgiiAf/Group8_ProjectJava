@@ -64,7 +64,7 @@
 .vbox, .hbox {
     -fx-border-color: #7f8c8d;
     -fx-border-radius: 5px;
-    -fx-background-color: #fafafa; /* Светлый фон */
+    -fx-background-color: #fafafa;
 }
 
 .blue-background-label {
