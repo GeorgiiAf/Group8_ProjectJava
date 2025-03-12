@@ -299,10 +299,6 @@ public class OmaMoottori extends Moottori{
 
 	@Override
 	public void tulokset() {
-		if (simulointiLoppu) {
-			return;
-		}
-
 		simulointiLoppu = true;
 
 		System.out.println("Simulointi päättyi kello " + Kello.getInstance().getAika());

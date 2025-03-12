@@ -319,9 +319,6 @@ public class SimulaattorinController implements SimulationListener {
             e.printStackTrace();
         }
 
-        if (moottori != null) {
-            moottori.tulokset();
-        }
 
         if (startButton != null) startButton.setDisable(false);
         if (stopButton != null) stopButton.setDisable(true);
