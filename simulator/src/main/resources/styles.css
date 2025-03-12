@@ -87,7 +87,7 @@
     -fx-padding: 0 0 0 20;
 }
 
-emoji-button {
+.emoji-button {
     -fx-font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
     -fx-font-size: 18px;
     -fx-padding: 5px;
