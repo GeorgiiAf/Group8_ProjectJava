@@ -8,11 +8,13 @@ import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
 
 import java.util.*;
-
+/**
+ * Represents the main engine of the simulation.
+ */
 public class OmaMoottori extends Moottori{
-	
-	private Saapumisprosessi saapumisprosessi;
-	private List<Asiakas> customers = new ArrayList<>();
+
+	private final Saapumisprosessi saapumisprosessi;
+	private final List<Asiakas> customers = new ArrayList<>();
 	private final List<SimulationListener> listeners = new ArrayList<>();
 
 	ArrayList<Palvelupiste> arrival = new ArrayList<>();
@@ -46,7 +48,9 @@ public class OmaMoottori extends Moottori{
 	private double defaultCost = 150;
 	private double electricCost = 300;
 	private double partsCost = 75;
-
+	/**
+	 * Constructs a new OmaMoottori instance.
+	 */
 	public OmaMoottori(){
 
 		saapumisprosessi = new Saapumisprosessi(new Negexp(3), tapahtumalista, TapahtumanTyyppi.CAR_ARRIVES);
@@ -54,6 +58,15 @@ public class OmaMoottori extends Moottori{
 
 	}
 
+	/**
+	 * Sets the spot values for different service points.
+	 *
+	 * @param arrivalSpots the number of arrival spots
+	 * @param diagnosticSpots the number of diagnostic spots
+	 * @param partsSpots the number of parts spots
+	 * @param maintenanceSpots the number of maintenance spots
+	 * @param carReadySpots the number of car ready spots
+	 */
 	public void setSpotValues(int arrivalSpots, int diagnosticSpots, int partsSpots, int maintenanceSpots, int carReadySpots){
 		this.arrivalSpots = arrivalSpots;
 		this.diagnosticSpots = diagnosticSpots;
@@ -62,12 +75,25 @@ public class OmaMoottori extends Moottori{
 		this.carReadySpots = carReadySpots;
 	}
 
-
+	/**
+	 * Gets the list of all service points.
+	 *
+	 * @return the list of all service points
+	 */
 	public ArrayList<ArrayList<Palvelupiste>> getAllServicePointsList() {
 		return allServicePoints;
 	}
 
 
+	/**
+	 * Creates a list of service points.
+	 *
+	 * @param amount the number of service points
+	 * @param mechanics the number of mechanics
+	 * @param serviceTime the service time generator
+	 * @param tapahtumanTyyppi the event type
+	 * @return the list of service points
+	 */
 	private ArrayList<Palvelupiste> createPalvelupiste(int amount, int mechanics, ContinuousGenerator serviceTime, TapahtumanTyyppi tapahtumanTyyppi){
 		ArrayList<Palvelupiste> servicePoints = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
@@ -103,9 +129,12 @@ public class OmaMoottori extends Moottori{
 		Asiakas.i = 0;
 	}
 
+
+
+
 	@Override
 	protected void suoritaTapahtuma(Tapahtuma t) {
-		if (simulointiLoppu) {
+        if (simulointiLoppu) {
 			tulokset();
 			return;
 		}
@@ -262,8 +291,8 @@ public class OmaMoottori extends Moottori{
 				a.isElectricCar() ? "Electric Car" : "Regular Car",
 				totalEarnings
 		);
-		notifyListeners(message);
-		a.raportti();
+		String raporttiMsg = a.raportti();
+		notifyListeners(raporttiMsg);
 	}
 
 	public Palvelupiste shortestQueue(ArrayList<Palvelupiste> servicePointArr) {
@@ -341,34 +370,71 @@ public class OmaMoottori extends Moottori{
 		System.out.println("Customers still in queue: " + customersInQueue);
 	}
 
-
+	/**
+	 * Calculates the total earnings from the simulation.
+	 *
+	 * @return the total earnings
+	 */
 	public double calculateTotalEarnings() {
 		return totalEarnings;
 	}
-
+	/**
+	 * Gets the number of served regular cars.
+	 *
+	 * @return the number of served regular cars
+	 */
 	public int getServedRegularCars() {
 		return servedRegularCars;
 	}
-
+	/**
+	 * Gets the number of served electric cars.
+	 *
+	 * @return the number of served electric cars
+	 */
 	public int getServedElectricCars() {
 		return servedElectricCars;
 	}
 
+	/**
+	 * Gets the number of rejected customers.
+	 *
+	 * @return the number of rejected customers
+	 */
 	public int getRejectedCustomers() {
 		return rejectedCustomers;
 	}
 
-
+	/**
+	 * Sets the simulation end flag.
+	 *
+	 * @param lopeta true to end the simulation, false otherwise
+	 */
 	public void setSimulointiLoppu(boolean lopeta) {
 		this.simulointiLoppu = lopeta;
 	}
+
+
+	/**
+	 * Sets the simulation duration.
+	 *
+	 * @param aika the simulation time in seconds
+	 * @throws IllegalArgumentException if the time is less than or equal to zero
+	 */
 	public void setSimulointiAika(double aika) {
 		if (aika <= 0) {
 			throw new IllegalArgumentException("Simulation time must be greater than 0");
 		}
 		this.simulointiaika = aika;
 	}
-
+	/**
+	 * Sets the service times for all service points.
+	 *
+	 * @param arrival     the arrival time
+	 * @param diagnostics the diagnostics time
+	 * @param parts       the parts ordering time
+	 * @param maintenance the maintenance time
+	 * @param ready       the ready time
+	 */
 	public void setAllServiceTime(int arrival, int diagnostics, int parts, int maintenance, int ready){
 		this.arrivalTime = arrival;
 		this.diagnosticsTime = diagnostics;
@@ -376,24 +442,42 @@ public class OmaMoottori extends Moottori{
 		this.maintenanceTime = maintenance;
 		this.readyTime = ready;
 	}
-
+	/**
+	 * Sets the pricing for different services.
+	 *
+	 * @param defaultCost the default service cost
+	 * @param electricCost the cost for electric cars
+	 * @param partsCost the cost for parts
+	 */
 	public void setAllPrices(double defaultCost, double electricCost, double partsCost) {
 		this.defaultCost = defaultCost;
 		this.electricCost = electricCost;
 		this.partsCost = partsCost;
 	}
 
-
+	/**
+	 * Adds a simulation listener.
+	 *
+	 * @param listener the listener to add
+	 */
 	public void addSimulationListener(SimulationListener listener) {
 		listeners.add(listener);
 	}
-
+	/**
+	 * Notifies all listeners with a message.
+	 *
+	 * @param message the message to send
+	 */
 	private void notifyListeners(String message) {
 		for (SimulationListener listener : listeners) {
 			listener.onLogMessage(message);
 		}
 	}
-
+	/**
+	 * Checks if the simulation is finished.
+	 *
+	 * @return true if the simulation is finished, false otherwise
+	 */
 	private boolean isSimulationFinished() {
 		for (ArrayList<Palvelupiste> servicePoints : allServicePoints) {
 			for (Palvelupiste p : servicePoints) {
@@ -414,6 +498,11 @@ public class OmaMoottori extends Moottori{
 		return true;
 	}
 
+	/**
+	 * Checks if the simulation has ended.
+	 *
+	 * @return true if the simulation has ended, false otherwise
+	 */
 	public boolean isSimulointiLoppu() {
 		return simulointiLoppu;
 	}

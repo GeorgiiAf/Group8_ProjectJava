@@ -7,7 +7,7 @@ import view.SimulaattorinGUI;
  */
 public class Main {
 
-    /**
+    /** 
      * Main method to start the application.
      *
      * @param args command line arguments

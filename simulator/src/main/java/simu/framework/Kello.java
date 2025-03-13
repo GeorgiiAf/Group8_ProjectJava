@@ -1,29 +1,54 @@
 package simu.framework;
 
+/**
+ * Singleton class representing the clock in the simulation.
+ */
 public class Kello {
 
 	private double aika;
 	private static Kello instanssi;
-	
-	private Kello(){
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private Kello() {
 		aika = 0;
 	}
-	
-	public static Kello getInstance(){
-		if (instanssi == null){
-			instanssi = new Kello();	
+
+	/**
+	 * Returns the singleton instance of the clock.
+	 *
+	 * @return the singleton instance
+	 */
+	public static Kello getInstance() {
+		if (instanssi == null) {
+			instanssi = new Kello();
 		}
 		return instanssi;
 	}
 
-	public void resetAika() { aika = 0; }
-	
-	public void setAika(double aika){
+	/**
+	 * Resets the time to zero.
+	 */
+	public void resetAika() {
+		aika = 0;
+	}
+
+	/**
+	 * Sets the time.
+	 *
+	 * @param aika the time to set
+	 */
+	public void setAika(double aika) {
 		this.aika = aika;
 	}
 
-	public double getAika(){
+	/**
+	 * Gets the current time.
+	 *
+	 * @return the current time
+	 */
+	public double getAika() {
 		return aika;
 	}
-	
 }

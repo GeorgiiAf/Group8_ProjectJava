@@ -1,34 +1,41 @@
-package simu.framework;			// I DKN  REWORK/DELETE
+package simu.framework;
 
-	public abstract class Moottori {
+/**
+ * Abstract class representing the engine of the simulation.
+ */
+public abstract class Moottori {
 
-		private double simulointiaika = 0;
+	private double simulointiaika = 0;
+	private Kello kello;
+	protected Tapahtumalista tapahtumalista;
+	private long viive = 100;
+	private boolean paused = false;
+	private boolean stopped = false;
 
-		private Kello kello;
-
-		protected Tapahtumalista tapahtumalista;
-		private long viive = 100;
-		private boolean paused = false;
-		private boolean stopped = false;
-
-
-
-	public Moottori(){
-
+	/**
+	 * Constructs a new Moottori instance.
+	 */
+	public Moottori() {
 		kello = Kello.getInstance(); // Otetaan kello muuttujaan yksinkertaistamaan koodia
-		
 		tapahtumalista = new Tapahtumalista();
-		
-		// Palvelupisteet luodaan simu.model-pakkauksessa Moottorin aliluokassa 
-		
-		
+		// Palvelupisteet luodaan simu.model-pakkauksessa Moottorin aliluokassa
 	}
 
-
+	/**
+	 * Sets the simulation time.
+	 *
+	 * @param aika the simulation time to set
+	 */
 	public void setSimulointiaika(double aika) {
 		simulointiaika = aika;
 	}
 
+	/**
+	 * Sets the delay between simulation steps.
+	 *
+	 * @param viive the delay to set
+	 * @throws IllegalArgumentException if the delay is negative
+	 */
 	public void setViive(long viive) {
 		if (viive < 0) {
 			throw new IllegalArgumentException("Delay must be non-negative");
@@ -36,10 +43,18 @@ package simu.framework;			// I DKN  REWORK/DELETE
 		this.viive = viive;
 	}
 
+	/**
+	 * Gets the delay between simulation steps.
+	 *
+	 * @return the delay
+	 */
 	public long getViive() {
 		return viive;
 	}
 
+	/**
+	 * Toggles the pause state of the simulation.
+	 */
 	public void setPause() {
 		paused = !paused;
 		if (!paused) {
@@ -49,64 +64,100 @@ package simu.framework;			// I DKN  REWORK/DELETE
 		}
 	}
 
-
-	public void aja(){
+	/**
+	 * Runs the simulation.
+	 */
+	public void aja() {
 		alustukset(); // luodaan mm. ensimmäinen tapahtuma
-		while (simuloidaan() && !stopped){
-			
+		while (simuloidaan() && !stopped) {
 			Trace.out(Trace.Level.INFO, "\nA-vaihe: kello on " + nykyaika());
 			kello.setAika(nykyaika());
-			
-			Trace.out(Trace.Level.INFO, "\nB-vaihe:" );
+
+			Trace.out(Trace.Level.INFO, "\nB-vaihe:");
 			suoritaBTapahtumat();
-			
-			Trace.out(Trace.Level.INFO, "\nC-vaihe:" );
+
+			Trace.out(Trace.Level.INFO, "\nC-vaihe:");
 			yritaCTapahtumat();
 
 			synchronized (this) {
 				try {
-					if(paused){
+					if (paused) {
 						wait();
 					}
 					Thread.sleep(viive > 0 ? viive : 100);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
-
 			}
 		}
 		tulokset();
 		kello.resetAika();
 	}
-	
-	private void suoritaBTapahtumat(){
-		while (tapahtumalista.getSeuraavanAika() == kello.getAika()){
+
+	/**
+	 * Executes B-phase events.
+	 */
+	private void suoritaBTapahtumat() {
+		while (tapahtumalista.getSeuraavanAika() == kello.getAika()) {
 			suoritaTapahtuma(tapahtumalista.poista());
 		}
 	}
 
-	private double nykyaika(){
+	/**
+	 * Gets the current time.
+	 *
+	 * @return the current time
+	 */
+	private double nykyaika() {
 		return tapahtumalista.getSeuraavanAika();
 	}
-	
-	private boolean simuloidaan(){
+
+	/**
+	 * Checks if the simulation is still running.
+	 *
+	 * @return true if the simulation is still running, false otherwise
+	 */
+	private boolean simuloidaan() {
 		return kello.getAika() < simulointiaika;
 	}
 
-	public boolean stopSimulation(){
+	/**
+	 * Stops the simulation.
+	 *
+	 * @return the new stopped state
+	 */
+	public boolean stopSimulation() {
 		return stopped = !stopped;
 	}
 
-	protected abstract void suoritaTapahtuma(Tapahtuma t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
-	protected abstract void yritaCTapahtumat();	// Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	/**
+	 * Executes the given event.
+	 *
+	 * @param t the event to execute
+	 */
+	protected abstract void suoritaTapahtuma(Tapahtuma t);
 
-	protected abstract void alustukset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	/**
+	 * Attempts to execute C-phase events.
+	 */
+	protected abstract void yritaCTapahtumat();
 
-	protected abstract void tulokset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	/**
+	 * Initializes the simulation.
+	 */
+	protected abstract void alustukset();
 
+	/**
+	 * Outputs the results of the simulation.
+	 */
+	protected abstract void tulokset();
 
-
+	/**
+	 * Gets the clock instance.
+	 *
+	 * @return the clock instance
+	 */
 	public Kello getKello() {
-			return Kello.getInstance();
-		}
+		return Kello.getInstance();
+	}
 }

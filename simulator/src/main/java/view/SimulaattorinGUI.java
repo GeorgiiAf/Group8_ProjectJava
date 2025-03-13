@@ -10,14 +10,26 @@ import javafx.stage.Stage;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
 
+/**
+ * Represents the main GUI application for the simulator.
+ */
 public class SimulaattorinGUI extends Application {
 
     private Kontrolleri kontrolleri;
+
+    /**
+     * Initializes the application.
+     */
     @Override
     public void init() {
         Trace.setTraceLevel(Level.INFO);
     }
 
+    /**
+     * Starts the application and sets up the primary stage.
+     *
+     * @param primaryStage the primary stage for this application
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -27,7 +39,6 @@ public class SimulaattorinGUI extends Application {
             Pane root = loader.load();
 
             SimulaattorinController controller = loader.getController();
-
             controller.setKontrolleri(kontrolleri);
 
             Scene scene = new Scene(root);
@@ -39,5 +50,4 @@ public class SimulaattorinGUI extends Application {
             e.printStackTrace();
         }
     }
-
 }

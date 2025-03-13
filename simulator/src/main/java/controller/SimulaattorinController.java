@@ -22,12 +22,14 @@ import simu.framework.Trace.Level;
 import simu.model.OmaMoottori;
 import simu.model.Palvelupiste;
 
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Controller class for the simulation application.
+ */
 public class SimulaattorinController implements SimulationListener {
 
     public Label inputErrorLabel;
@@ -49,43 +51,73 @@ public class SimulaattorinController implements SimulationListener {
     private final Map<String, Integer> prices = new LinkedHashMap<>();
 
     private final Map<String, Double> animationScales = new HashMap<>();
-    private Map<String, Point2D> servicePointPositions = new LinkedHashMap<>();
+    private final Map<String, Point2D> servicePointPositions = new LinkedHashMap<>();
 
 
-    @FXML private TextField aika;
-    @FXML private Label speedLabel;
-    @FXML private Label tulos;
-    @FXML private Button startButton;
-    @FXML private Button stopButton;
-    @FXML private Button pauseButton;
-    @FXML private Canvas carRepairCanvas; // Canvas for drawing service points
+    @FXML
+    private TextField aika;
+    @FXML
+    private Label speedLabel;
+    @FXML
+    private Label tulos;
+    @FXML
+    private Button startButton;
+    @FXML
+    private Button stopButton;
+    @FXML
+    private Button pauseButton;
+    @FXML
+    private Canvas carRepairCanvas; // Canvas for drawing service points
 
-    @FXML private Spinner<Integer> arrivalSpots;
-    @FXML private Spinner<Integer> diagnosticsSpots;
-    @FXML private Spinner<Integer> partsSpots;
-    @FXML private Spinner<Integer> maintenanceSpots;
-    @FXML private Spinner<Integer> carReadySpots;
+    @FXML
+    private Spinner<Integer> arrivalSpots;
+    @FXML
+    private Spinner<Integer> diagnosticsSpots;
+    @FXML
+    private Spinner<Integer> partsSpots;
+    @FXML
+    private Spinner<Integer> maintenanceSpots;
+    @FXML
+    private Spinner<Integer> carReadySpots;
 
-    @FXML private Slider defaultCostSlider;
-    @FXML private Slider electricCostSlider;
-    @FXML private Slider partsCostSlider;
-    @FXML private Label defaultCostLabel;
-    @FXML private Label electricCostLabel;
-    @FXML private Label partsCostLabel;
+    @FXML
+    private Slider defaultCostSlider;
+    @FXML
+    private Slider electricCostSlider;
+    @FXML
+    private Slider partsCostSlider;
+    @FXML
+    private Label defaultCostLabel;
+    @FXML
+    private Label electricCostLabel;
+    @FXML
+    private Label partsCostLabel;
 
-    @FXML private Button showResultsButton;
-    @FXML private Button helpButton;
-    @FXML private ListView<TextFlow> logTextArea;
-    @FXML private ListView<TextFlow> infoBox;
+    @FXML
+    private Button showResultsButton;
+    @FXML
+    private Button helpButton;
+    @FXML
+    private ListView<TextFlow> logTextArea;
+    @FXML
+    private ListView<TextFlow> infoBox;
 
-    @FXML private Slider arrivalTimeSlider;
-    @FXML private Slider diagnosticsTimeSlider;
-    @FXML private Slider partsTimeSlider;
-    @FXML private Slider maintenanceTimeSlider;
-    @FXML private Slider carReadyTimeSlider;
+    @FXML
+    private Slider arrivalTimeSlider;
+    @FXML
+    private Slider diagnosticsTimeSlider;
+    @FXML
+    private Slider partsTimeSlider;
+    @FXML
+    private Slider maintenanceTimeSlider;
+    @FXML
+    private Slider carReadyTimeSlider;
 
     private GraphicsContext gc;
 
+    /**
+     * Initializes the controller class.
+     */
     @FXML
     private void initialize() {
 
@@ -176,6 +208,11 @@ public class SimulaattorinController implements SimulationListener {
         drawAllServicePoints();
     }
 
+    /**
+     * Sets the controller for the simulation.
+     *
+     * @param kontrolleri the controller to set
+     */
     public void setKontrolleri(IKontrolleriForV kontrolleri) {
         this.kontrolleri = kontrolleri;
     }
@@ -186,6 +223,11 @@ public class SimulaattorinController implements SimulationListener {
         logging(message);
     }
 
+    /**
+     * Gets the simulation time.
+     *
+     * @return the simulation time
+     */
 
     public double getAika() {
         try {
@@ -196,6 +238,11 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Gets the delay time.
+     *
+     * @return the delay time
+     */
     public long getViive() {
         try {
             return Long.parseLong(speedLabel.getText());
@@ -205,13 +252,28 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Sets the end time of the simulation.
+     *
+     * @param aika the end time to set
+     */
     public void setLoppuaika(double aika) {
         tulos.setText(String.format("%.2f", aika));
     }
 
+
+    /**
+     * Creates a new customer.
+     */
     public void uusiAsiakas() {
         updateVisualisation();
     }
+
+    /**
+     * Shows an error message.
+     *
+     * @param message the error message to show
+     */
 
     private void showErrorMessage(String message) {
         if (inputErrorLabel != null) {
@@ -222,6 +284,9 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Handles the start button action.
+     */
     @FXML
     private void handleStartButton() {
         double simulationTime = getAika();
@@ -243,12 +308,9 @@ public class SimulaattorinController implements SimulationListener {
             inputErrorLabel.setVisible(false);
         }
 
-
         moottori = new OmaMoottori();
         moottori.addSimulationListener(this);
         moottori.setSimulointiLoppu(false);
-
-
 
         Trace.setTraceLevel(Level.INFO);
 
@@ -297,12 +359,15 @@ public class SimulaattorinController implements SimulationListener {
         if (startButton != null) startButton.setDisable(true);
         if (stopButton != null) stopButton.setDisable(false);
 
-        pauseButton.setOnAction(event -> pause(moottori));
+        pauseButton.setOnAction(_ -> pause(moottori));
 
         animationTimer.start();
         simulationThread.start();
     }
 
+    /**
+     * Handles the stop button action.
+     */
 
     @FXML
     private void handleStopButton() {
@@ -325,6 +390,10 @@ public class SimulaattorinController implements SimulationListener {
         animationTimer.stop();
     }
 
+    /**
+     * Handles the help button action.
+     */
+
     @FXML
     private void handleHelpButton() {
         try {
@@ -340,6 +409,10 @@ public class SimulaattorinController implements SimulationListener {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Handles the show results button action.
+     */
 
     @FXML
     private void handleShowResultsButton() {
@@ -377,16 +450,23 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Updates the results from the motor.
+     */
+
     private void updateResultsFromMoottori() {
         if (moottori == null || kontrolleri == null) {
             return;
         }
-
         kontrolleri.setTotalEarnings(moottori.calculateTotalEarnings());
         kontrolleri.setServedRegularCars(moottori.getServedRegularCars());
         kontrolleri.setServedElectricCars(moottori.getServedElectricCars());
         kontrolleri.setRejectedCustomers(moottori.getRejectedCustomers());
     }
+
+    /**
+     * Updates the visualization.
+     */
 
     public void updateVisualisation() {
         if (gc == null || moottori == null) {
@@ -439,6 +519,9 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Handles the speed up button action.
+     */
 
     @FXML
     private void handleSpeedUpButton() {
@@ -446,13 +529,17 @@ public class SimulaattorinController implements SimulationListener {
             long currentDelay = moottori.getViive();
             if (currentDelay > 100) {
                 moottori.setViive(currentDelay - 100);
-            }
-            else if (currentDelay > 10) {
+            } else if (currentDelay > 10) {
                 moottori.setViive(currentDelay - 10);
             }
             updateLabelWithValue((int) currentDelay, speedLabel);
         }
     }
+
+
+    /**
+     * Handles the slow down button action.
+     */
 
     @FXML
     private void handleSlowDownButton() {
@@ -460,20 +547,30 @@ public class SimulaattorinController implements SimulationListener {
             long currentDelay = moottori.getViive();
             if (currentDelay < 100) {
                 moottori.setViive(100);
-            }
-            else {
+            } else {
                 moottori.setViive(currentDelay + 100);
             }
             updateLabelWithValue((int) currentDelay, speedLabel);
         }
     }
 
+    /**
+     * Draws the type label.
+     *
+     * @param gc        the graphics context
+     * @param pointType the point type
+     * @param y         the y-coordinate
+     */
+
     private void drawTypeLabel(GraphicsContext gc, String pointType, double y) {
         double xLeftEdge = 5;
         gc.setFill(Color.BLACK);
-        gc.fillText(pointType, xLeftEdge, y-15);
+        gc.fillText(pointType, xLeftEdge, y - 15);
     }
 
+    /**
+     * Draws all service points.
+     */
 
     public void drawAllServicePoints() {
         GraphicsContext gc = carRepairCanvas.getGraphicsContext2D();
@@ -494,6 +591,16 @@ public class SimulaattorinController implements SimulationListener {
             typeIndex++;
         }
     }
+
+    /**
+     * Draws the service points.
+     *
+     * @param gc             the graphics context
+     * @param pointType      the point type
+     * @param activatedCount the activated count
+     * @param totalPoints    the total points
+     * @param yStart         the y-coordinate start
+     */
 
     public void drawServicePoints(GraphicsContext gc, String pointType, int activatedCount, int totalPoints, double yStart) {
         double circleDiameter = 15.0;
@@ -524,6 +631,11 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Pauses the simulation.
+     *
+     * @param m the motor
+     */
     private void pause(OmaMoottori m) {
         paused = !paused;
         m.setPause();
@@ -539,30 +651,42 @@ public class SimulaattorinController implements SimulationListener {
         paused = wasPaused;
     }
 
+    /**
+     * Logs a message.
+     *
+     * @param s the message to log
+     */
+
     public void logging(String s) {
         if (!paused) {
 
-        Platform.runLater(() -> {
-            LocalTime currentTime = LocalTime.now();
-            String timeString = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            Platform.runLater(() -> {
+                LocalTime currentTime = LocalTime.now();
+                String timeString = currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
-            Text timeText = new Text(timeString + "  ");
-            timeText.setStyle("-fx-font-weight: bold;");
+                Text timeText = new Text(timeString + "  ");
+                timeText.setStyle("-fx-font-weight: bold;");
 
-            Text messageText = new Text(s);
+                Text messageText = new Text(s);
 
-            TextFlow textFlow = new TextFlow(timeText, messageText);
+                TextFlow textFlow = new TextFlow(timeText, messageText);
 
-            logTextArea.getItems().add(textFlow);
+                logTextArea.getItems().add(textFlow);
 
-            if (logTextArea.getItems().size() > 100) {
-                logTextArea.getItems().remove(0);
-            }
+                if (logTextArea.getItems().size() > 100) {
+                    logTextArea.getItems().remove(0);
+                }
 
-            logTextArea.scrollTo(logTextArea.getItems().size() - 1);
-        });
+                logTextArea.scrollTo(logTextArea.getItems().size() - 1);
+            });
+        }
     }
-}
+
+    /**
+     * Logs changes.
+     *
+     * @param s the changes to log
+     */
 
     public void loggingChanges(String s) {
         Platform.runLater(() -> {
@@ -586,10 +710,13 @@ public class SimulaattorinController implements SimulationListener {
             if (infoBox.getItems().size() > 100) {
                 infoBox.getItems().remove(0);
             }
-
             infoBox.scrollTo(infoBox.getItems().size() - 1);
         });
     }
+
+    /**
+     * Initializes the spinners.
+     */
 
     private void initializeSpinners() {
         setupSpinner(arrivalSpots, "CAR_ARRIVES");
@@ -598,6 +725,13 @@ public class SimulaattorinController implements SimulationListener {
         setupSpinner(maintenanceSpots, "SIMPLE_MAINTENANCE");
         setupSpinner(carReadySpots, "CAR_READY");
     }
+
+    /**
+     * Sets up a spinner.
+     *
+     * @param spinner   the spinner
+     * @param pointType the point type
+     */
 
     private void setupSpinner(Spinner<Integer> spinner, String pointType) {
         int defaultValue = spinner.getValue();
@@ -617,14 +751,21 @@ public class SimulaattorinController implements SimulationListener {
         });
     }
 
+    /**
+     * Updates the slider text.
+     *
+     * @param slider the slider
+     */
     public void sliderTextUpdate(Slider slider) {
-        slider.setOnMouseReleased(event -> {
-            loggingChanges(slider.getId() + " -> " + slider.getValue());
-        });
+        slider.setOnMouseReleased(_ -> loggingChanges(slider.getId() + " -> " + slider.getValue()));
     }
 
+    /**
+     * Updates the prices.
+     */
+
     private void updatePrices() {
-        if(this.moottori != null) {
+        if (this.moottori != null) {
             double newDefaultCost = defaultCostSlider.getValue();
             double newElectricCost = electricCostSlider.getValue();
             double newPartsCost = partsCostSlider.getValue();
@@ -633,28 +774,53 @@ public class SimulaattorinController implements SimulationListener {
         }
     }
 
+    /**
+     * Updates the label with a value.
+     *
+     * @param value the value
+     * @param label the label
+     */
     private static void updateLabelWithValue(int value, Label label) {
         label.setText(String.valueOf(value));
     }
 
+    /**
+     * Links a slider to a label.
+     *
+     * @param slider the slider
+     * @param label  the label
+     */
+
     public void linkSliderToLabel(Slider slider, Label label) {
         updateLabelWithValue((int) slider.getValue(), label);
 
-        slider.setOnMouseReleased(event -> {
+        slider.setOnMouseReleased(_ -> {
             updatePrices();
             loggingChanges(slider.getId() + " -> " + slider.getValue());
         });
 
-        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateLabelWithValue(newValue.intValue(), label);
-        });
+        slider.valueProperty().addListener((observable, oldValue, newValue) -> updateLabelWithValue(newValue.intValue(), label));
     }
+
+
+    /**
+     * Initializes the animation.
+     *
+     * @param key the key
+     */
 
     private void initializeAnimation(String key) {
         if (!animationScales.containsKey(key)) {
             animationScales.put(key, 0.0);
         }
     }
+
+    /**
+     * Updates the animation scale.
+     *
+     * @param key       the key
+     * @param deltaTime the delta time
+     */
 
     private void updateAnimationScale(String key, double deltaTime) {
         if (animationScales.containsKey(key)) {
